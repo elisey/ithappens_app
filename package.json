@@ -12,7 +12,8 @@
     "format:check": "prettier --check .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "install-task": "echo 'Please install Task: https://taskfile.dev/installation/' && echo 'macOS: brew install go-task'"
   },
   "dependencies": {
     "preact": "^10.19.3"

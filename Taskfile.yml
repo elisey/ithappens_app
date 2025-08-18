@@ -1,0 +1,70 @@
+# ABOUTME: Task automation configuration for development workflow
+# ABOUTME: Настройка автоматизации команд разработки с зависимостями и описаниями
+version: '3'
+
+vars:
+  SRC_DIR: './src'
+  DIST_DIR: './dist'
+  COVERAGE_DIR: './coverage'
+
+tasks:
+  dev:
+    desc: 'Start development server'
+    cmds:
+      - npm run dev
+
+  build:
+    desc: 'Build for production (runs check first)'
+    deps: [check]
+    cmds:
+      - npm run build
+
+  preview:
+    desc: 'Preview production build'
+    deps: [build]
+    cmds:
+      - npm run preview
+
+  test:
+    desc: 'Run tests'
+    cmds:
+      - npm run test
+
+  test:watch:
+    desc: 'Run tests in watch mode'
+    cmds:
+      - npm run test:watch
+
+  test:coverage:
+    desc: 'Run tests with coverage report'
+    cmds:
+      - npm run test:coverage
+
+  lint:
+    desc: 'Check code with ESLint'
+    cmds:
+      - npm run lint
+
+  format:
+    desc: 'Format code with Prettier'
+    cmds:
+      - npm run format
+
+  format:check:
+    desc: 'Check code formatting'
+    cmds:
+      - npm run format:check
+
+  check:
+    desc: 'Run all quality checks (lint + format + test)'
+    cmds:
+      - task: lint
+      - task: format:check
+      - task: test
+
+  clean:
+    desc: 'Clean generated files'
+    cmds:
+      - rm -rf {{.DIST_DIR}}
+      - rm -rf {{.COVERAGE_DIR}}
+      - rm -rf node_modules/.vite
