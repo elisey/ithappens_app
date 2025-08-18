@@ -13,7 +13,8 @@
       "Bash(npm run format:*)",
       "Bash(npm run lint)",
       "Bash(npm run test:*)",
-      "Bash(task:*)"
+      "Bash(task:*)",
+      "Bash(npx lefthook:*)"
     ],
     "deny": [],
     "ask": []
