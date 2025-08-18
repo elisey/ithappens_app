@@ -1,0 +1,31 @@
+# ABOUTME: Lefthook configuration for Git hooks automation
+# ABOUTME: Настройка pre-commit и commit-msg хуков для контроля качества кода
+
+# Pre-commit hook - runs only on staged files
+pre-commit:
+  parallel: true
+  commands:
+    lint:
+      glob: '*.{js,jsx,ts,tsx}'
+      run: npx eslint {staged_files} --report-unused-disable-directives --max-warnings 0
+      stage_fixed: true
+    format:
+      glob: '*.{js,jsx,ts,tsx,json,css,md,yml,yaml}'
+      run: npx prettier --write {staged_files}
+      stage_fixed: true
+    test:
+      run: npm run test
+      fail_text: 'Tests failed. Please fix tests before committing.'
+
+# Commit message hook - validates commit message format
+commit-msg:
+  commands:
+    check-format:
+      run: |
+        if ! grep -qE "^(feat|fix|docs|style|refactor|test|chore)(\(.+\))?: .{1,50}" "{1}"; then
+          echo "❌ Invalid commit message format!"
+          echo "Use: <type>[optional scope]: <description>"
+          echo "Types: feat, fix, docs, style, refactor, test, chore"
+          echo "Example: feat(auth): add login validation"
+          exit 1
+        fi
