@@ -8,11 +8,11 @@
       "Bash(true)",
       "Bash(npm run build:*)",
       "Bash(git add:*)",
-      "Bash(git commit:*)",
       "Bash(npm install:*)",
       "Bash(npm run format:check:*)",
       "Bash(npm run format:*)",
-      "Bash(npm run lint)"
+      "Bash(npm run lint)",
+      "Bash(npm run test:*)"
     ],
     "deny": [],
     "ask": []
