@@ -1,104 +1,104 @@
 # ithappens
 
-PWA приложение для чтения историй с офлайн-доступом.
+PWA application for reading stories with offline access.
 
-## Разработка
+## Development
 
-Для автоматизации команд разработки используется [Task](https://taskfile.dev/).
+Development automation is handled by [Task](https://taskfile.dev/).
 
-### Установка Task
+### Installing Task
 
-Если Task не установлен, установите его:
+If Task is not installed, install it:
 
 ```bash
 # macOS
 brew install go-task
 
-# Linux/Windows - см. https://taskfile.dev/installation/
+# Linux/Windows - see https://taskfile.dev/installation/
 ```
 
-### Доступные команды
+### Available Commands
 
 ```bash
-# Запуск dev сервера
+# Start dev server
 task dev
 
-# Проверка качества кода (lint + format + test)
+# Code quality check (lint + format + test)
 task check
 
-# Сборка для продакшена (с предварительной проверкой)
+# Production build (with preliminary checks)
 task build
 
-# Предпросмотр продакшен сборки
+# Preview production build
 task preview
 
-# Тестирование
-task test                # Однократный запуск тестов
-task test:watch          # Тесты в режиме наблюдения
-task test:coverage       # Тесты с coverage отчетом
+# Testing
+task test                # Run tests once
+task test:watch          # Run tests in watch mode
+task test:coverage       # Run tests with coverage report
 
-# Проверка кода
-task lint                # ESLint проверка
-task format              # Форматирование Prettier
-task format:check        # Проверка форматирования
+# Code checking
+task lint                # ESLint check
+task format              # Prettier formatting
+task format:check        # Check formatting
 
-# Очистка сгенерированных файлов
+# Clean generated files
 task clean
 ```
 
-### Архитектура проекта
+### Project Architecture
 
 ```
 src/
-├── components/          # React компоненты
-├── services/           # Бизнес-логика и API
-├── utils/              # Утилиты
-├── types/              # TypeScript типы
-├── data/               # Статические данные
-└── tests/              # Настройки тестирования
+├── components/          # React components
+├── services/           # Business logic and API
+├── utils/              # Utilities
+├── types/              # TypeScript types
+├── data/               # Static data
+└── tests/              # Test setup
 ```
 
-## Технологический стек
+## Technology Stack
 
 - **Frontend:** Preact + TypeScript
 - **Build Tool:** Vite
-- **Стили:** CSS Modules
-- **Тестирование:** Vitest + Testing Library
-- **Качество кода:** ESLint + Prettier
-- **Автоматизация:** Task
+- **Styles:** CSS Modules
+- **Testing:** Vitest + Testing Library
+- **Code Quality:** ESLint + Prettier
+- **Automation:** Task
 
 ## Git Hooks
 
-Проект использует [lefthook](https://github.com/evilmartians/lefthook) для автоматической проверки качества кода:
+The project uses [lefthook](https://github.com/evilmartians/lefthook) for automatic code quality checks:
 
 ### Pre-commit hook
 
-Автоматически выполняется перед каждым коммитом:
+Runs automatically before each commit:
 
-- **Lint**: ESLint проверка для staged файлов
-- **Format**: Prettier форматирование для staged файлов
-- **Test**: Запуск всех тестов
+- **Lint**: ESLint check for staged files
+- **Format**: Prettier formatting for staged files
+- **Test**: Run all tests
 
 ### Commit-msg hook
 
-Проверяет формат сообщения коммита:
+Validates commit message format:
 
-- `feat: новая функциональность`
-- `fix: исправление бага`
-- `docs: изменения документации`
-- `style: форматирование кода`
-- `refactor: рефакторинг`
-- `test: добавление тестов`
-- `chore: обновление зависимостей и настроек`
+- `feat: new feature`
+- `fix: bug fix`
+- `docs: documentation changes`
+- `style: code formatting`
+- `refactor: refactoring`
+- `test: adding tests`
+- `chore: dependency and config updates`
 
-### Обход hooks
+### Bypassing hooks
 
-При необходимости можно пропустить hooks:
+You can skip hooks when necessary:
 
 ```bash
 git commit --no-verify -m "message"
 ```
 
-## Команды разработки
+## Development Commands
 
-Все основные команды доступны через Task. Рекомендуется использовать `task check` перед каждым коммитом для обеспечения качества кода.
+All main commands are available through Task. It's recommended to use `task check` before each commit to ensure code quality.
