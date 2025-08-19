@@ -1,0 +1,72 @@
+/* Typography styles for optimal readability */
+
+body {
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--color-text);
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  line-height: var(--line-height-heading);
+  font-weight: 600;
+  color: var(--color-text);
+}
+
+h1 {
+  font-size: 1.5rem;
+}
+
+h2 {
+  font-size: 1.25rem;
+}
+
+h3 {
+  font-size: 1.125rem;
+}
+
+p {
+  margin-bottom: var(--space-md);
+  max-width: 65ch; /* Optimal reading width */
+}
+
+p:last-child {
+  margin-bottom: 0;
+}
+
+/* Story text specific styles */
+.story-content {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--color-text);
+}
+
+.story-content p {
+  margin-bottom: var(--space-lg);
+}
+
+.story-content p:last-child {
+  margin-bottom: 0;
+}
+
+/* Text size variants */
+.text-large {
+  font-size: var(--font-size-large);
+}
+
+.text-small {
+  font-size: var(--font-size-small);
+}
+
+.text-secondary {
+  color: var(--color-text-secondary);
+}
+
+.text-muted {
+  color: var(--color-text-muted);
+}

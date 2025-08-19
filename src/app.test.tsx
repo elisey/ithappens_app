@@ -14,8 +14,8 @@ describe('App', () => {
     expect(screen.getByText('ithappens')).toBeInTheDocument()
   })
 
-  it('displays the loading message', () => {
+  it('displays story content', () => {
     render(<App />)
-    expect(screen.getByText('Загрузка приложения...')).toBeInTheDocument()
+    expect(screen.getByText(/Это пример истории для демонстрации типографики/)).toBeInTheDocument()
   })
 })

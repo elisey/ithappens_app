@@ -4,9 +4,17 @@ import { useState } from 'preact/hooks'
 import styles from './app.module.css'
 import { Layout } from './components/Layout'
 import { Navigation } from './components/Navigation'
+import { StoryContent } from './components/StoryContent'
 
 export function App() {
   const [currentId] = useState(1)
+  const storyText = `Это пример истории для демонстрации типографики и компонента StoryContent.
+
+В этой истории несколько параграфов, чтобы показать, как текст отображается с правильными отступами и оптимальной шириной строки для удобного чтения.
+
+Типографические настройки оптимизированы для мобильных устройств, обеспечивая комфортное чтение на экранах разных размеров.
+
+CSS переменные позволяют легко менять цветовую схему и отступы во всем приложении.`
 
   const handlePrevious = () => console.log('Previous')
   const handleNext = () => console.log('Next')
@@ -30,9 +38,7 @@ export function App() {
         />
       }
     >
-      <div className={styles.mainContent}>
-        <p className={styles.loading}>Загрузка приложения...</p>
-      </div>
+      <StoryContent text={storyText} />
     </Layout>
   )
 }
