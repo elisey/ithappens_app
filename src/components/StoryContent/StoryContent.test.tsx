@@ -59,7 +59,8 @@ describe('StoryContent', () => {
   it('applies correct CSS classes', () => {
     const { container } = render(<StoryContent text="Test story" />)
 
-    expect(container.firstChild?.className).toMatch(/container/)
+    const storyDiv = container.querySelector('div')
+    expect(storyDiv?.className).toMatch(/container/)
 
     const article = container.querySelector('article')
     expect(article?.className).toMatch(/story/)

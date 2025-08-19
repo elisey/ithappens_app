@@ -51,7 +51,7 @@ describe('Layout', () => {
       </Layout>
     )
 
-    const layoutDiv = container.firstChild
+    const layoutDiv = container.querySelector('div')
     expect(layoutDiv?.className).toMatch(/layout/)
 
     const header = container.querySelector('header')
