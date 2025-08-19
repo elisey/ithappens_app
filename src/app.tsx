@@ -1,9 +1,17 @@
 // ABOUTME: Main application component
 // ABOUTME: Главный компонент приложения с Layout и тремя зонами
+import { useState } from 'preact/hooks'
 import styles from './app.module.css'
 import { Layout } from './components/Layout'
+import { Navigation } from './components/Navigation'
 
 export function App() {
+  const [currentId] = useState(1)
+
+  const handlePrevious = () => console.log('Previous')
+  const handleNext = () => console.log('Next')
+  const handleJump = () => console.log('Jump to ID')
+
   return (
     <Layout
       header={
@@ -12,9 +20,14 @@ export function App() {
         </div>
       }
       footer={
-        <div className={styles.footerContent}>
-          <p className={styles.placeholder}>Navigation will be here</p>
-        </div>
+        <Navigation
+          onPrevious={handlePrevious}
+          onNext={handleNext}
+          onJump={handleJump}
+          currentId={currentId}
+          canGoPrevious={true}
+          canGoNext={true}
+        />
       }
     >
       <div className={styles.mainContent}>
