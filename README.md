@@ -91,14 +91,6 @@ Validates commit message format:
 - `test: adding tests`
 - `chore: dependency and config updates`
 
-### Bypassing hooks
-
-You can skip hooks when necessary:
-
-```bash
-git commit --no-verify -m "message"
-```
-
 ## Development Commands
 
 All main commands are available through Task. It's recommended to use `task check` before each commit to ensure code quality.
