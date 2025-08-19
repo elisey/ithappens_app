@@ -16,6 +16,9 @@ pre-commit:
     test:
       run: npm run test
       fail_text: 'Tests failed. Please fix tests before committing.'
+    build:
+      run: npm run build
+      fail_text: 'Build failed. Please fix build errors before committing.'
 
 # Commit message hook - validates commit message format
 commit-msg:

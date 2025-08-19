@@ -1,0 +1,49 @@
+:root {
+  /* Typography */
+  --font-family-base: system-ui, -apple-system, sans-serif;
+  --font-size-base: 16px;
+  --font-size-large: 18px;
+  --font-size-small: 14px;
+  --line-height-base: 1.6;
+  --line-height-compact: 1.4;
+  --line-height-heading: 1.2;
+
+  /* Spacing */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+
+  /* Components */
+  --header-height: 56px;
+  --footer-height: 64px;
+  --button-height: 48px;
+  --border-radius: 8px;
+
+  /* Colors (light theme) */
+  --color-background: #ffffff;
+  --color-text: #333333;
+  --color-text-secondary: #666666;
+  --color-text-muted: #888888;
+  --color-border: #e0e0e0;
+  --color-border-light: #f0f0f0;
+
+  /* Interactive elements */
+  --color-button-bg: #f8f9fa;
+  --color-button-text: #333333;
+  --color-button-border: #e0e0e0;
+  --color-button-disabled: #cccccc;
+  --color-button-hover: #e9ecef;
+  --color-button-active: #dee2e6;
+
+  /* Primary accent */
+  --color-primary: #646cff;
+  --color-primary-light: #f8f9ff;
+  --color-primary-dark: #515bd4;
+
+  /* Focus and accessibility */
+  --color-focus: #646cff;
+  --focus-ring-width: 2px;
+  --focus-ring-offset: 2px;
+}

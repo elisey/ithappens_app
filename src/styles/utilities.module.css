@@ -1,0 +1,111 @@
+/* Utility classes for common styling patterns */
+
+/* Spacing utilities */
+.marginXs {
+  margin: var(--space-xs);
+}
+
+.marginSm {
+  margin: var(--space-sm);
+}
+
+.marginMd {
+  margin: var(--space-md);
+}
+
+.marginLg {
+  margin: var(--space-lg);
+}
+
+.marginXl {
+  margin: var(--space-xl);
+}
+
+.paddingXs {
+  padding: var(--space-xs);
+}
+
+.paddingSm {
+  padding: var(--space-sm);
+}
+
+.paddingMd {
+  padding: var(--space-md);
+}
+
+.paddingLg {
+  padding: var(--space-lg);
+}
+
+.paddingXl {
+  padding: var(--space-xl);
+}
+
+/* Layout utilities */
+.flexCenter {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flexColumn {
+  display: flex;
+  flex-direction: column;
+}
+
+.flexRow {
+  display: flex;
+  flex-direction: row;
+}
+
+.textCenter {
+  text-align: center;
+}
+
+.textLeft {
+  text-align: left;
+}
+
+.textRight {
+  text-align: right;
+}
+
+/* Accessibility utilities */
+.srOnly {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Focus utilities */
+.focusVisible:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* Typography utilities */
+.fontLarge {
+  font-size: var(--font-size-large);
+}
+
+.fontSmall {
+  font-size: var(--font-size-small);
+}
+
+.fontBold {
+  font-weight: 600;
+}
+
+.lineHeightCompact {
+  line-height: var(--line-height-compact);
+}
+
+.lineHeightBase {
+  line-height: var(--line-height-base);
+}
