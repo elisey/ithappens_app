@@ -26,6 +26,8 @@ export default [
         document: 'readonly',
         window: 'readonly',
         __dirname: 'readonly',
+        fetch: 'readonly',
+        globalThis: 'readonly',
         describe: 'readonly',
         it: 'readonly',
         test: 'readonly',
