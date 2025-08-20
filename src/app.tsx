@@ -19,8 +19,10 @@ export function App({ storyService: injectedStoryService }: AppProps = {}) {
   const storyServiceRef = useRef<StoryService | null>(null)
 
   // Initialize service instance once or when injected service changes
-  if (!storyServiceRef.current || storyServiceRef.current !== injectedStoryService) {
+  if (!storyServiceRef.current) {
     storyServiceRef.current = injectedStoryService || new StoryService()
+  } else if (injectedStoryService && storyServiceRef.current !== injectedStoryService) {
+    storyServiceRef.current = injectedStoryService
   }
 
   const storyService = storyServiceRef.current
