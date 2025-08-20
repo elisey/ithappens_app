@@ -21,7 +21,8 @@
       "Bash(npm run dev:*)",
       "Bash(npm test:*)",
       "Bash(sed:*)",
-      "Bash(npm run lint:*)"
+      "Bash(npm run lint:*)",
+      "Bash(npx eslint:*)"
     ],
     "deny": [],
     "ask": []

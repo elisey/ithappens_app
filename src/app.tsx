@@ -2,6 +2,7 @@
 // ABOUTME: Handles data loading, navigation, and state for the entire application
 import { useState, useEffect, useCallback, useMemo, useRef } from 'preact/hooks'
 import styles from './app.module.css'
+import { JumpToIdModal } from './components/JumpToIdModal'
 import { Layout } from './components/Layout'
 import { Navigation } from './components/Navigation'
 import { StoryContent } from './components/StoryContent'
@@ -28,6 +29,7 @@ export function App({ storyService: injectedStoryService }: AppProps = {}) {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [availableIds, setAvailableIds] = useState<StoryId[]>([])
+  const [isJumpModalOpen, setIsJumpModalOpen] = useState(false)
 
   // Initialize story service and load first story
   useEffect(() => {
@@ -102,9 +104,27 @@ export function App({ storyService: injectedStoryService }: AppProps = {}) {
     return () => document.removeEventListener('keydown', handleKeyPress)
   }, [currentStoryId, isLoading, handleNext, handlePrevious])
 
-  const handleJump = useCallback(() => {
-    // Placeholder for jump functionality - will be implemented later
-    console.log('Jump to ID - to be implemented')
+  const handleJumpToId = useCallback(() => {
+    setIsJumpModalOpen(true)
+  }, [])
+
+  const handleJumpSubmit = useCallback((targetId: StoryId) => {
+    if (!storyService.isLoaded()) return
+
+    const storyContent = storyService.getById(targetId)
+    if (storyContent) {
+      setCurrentStoryId(targetId)
+      setStoryText(storyContent)
+      setIsJumpModalOpen(false)
+    } else {
+      // This shouldn't happen if validation is working correctly
+      console.error(`Story with ID ${targetId} not found`)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // storyService is stable via useRef, no need to include
+
+  const handleJumpModalClose = useCallback(() => {
+    setIsJumpModalOpen(false)
   }, [])
 
   // Calculate navigation state with memoization
@@ -147,7 +167,7 @@ export function App({ storyService: injectedStoryService }: AppProps = {}) {
         <Navigation
           onPrevious={handlePrevious}
           onNext={handleNext}
-          onJump={handleJump}
+          onJump={handleJumpToId}
           currentId={currentStoryId}
           canGoPrevious={canGoPrevious}
           canGoNext={canGoNextValue}
@@ -155,6 +175,12 @@ export function App({ storyService: injectedStoryService }: AppProps = {}) {
       }
     >
       <StoryContent text={storyText} isLoading={isLoading} />
+      <JumpToIdModal
+        isOpen={isJumpModalOpen}
+        onClose={handleJumpModalClose}
+        onJump={handleJumpSubmit}
+        availableIds={availableIds}
+      />
     </Layout>
   )
 }
