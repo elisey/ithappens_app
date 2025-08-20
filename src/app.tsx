@@ -1,6 +1,6 @@
 // ABOUTME: Main application component with StoryService integration and state management
 // ABOUTME: Handles data loading, navigation, and state for the entire application
-import { useState, useEffect, useCallback, useMemo } from 'preact/hooks'
+import { useState, useEffect, useCallback, useMemo, useRef } from 'preact/hooks'
 import styles from './app.module.css'
 import { Layout } from './components/Layout'
 import { Navigation } from './components/Navigation'
@@ -14,10 +14,15 @@ interface AppProps {
 }
 
 export function App({ storyService: injectedStoryService }: AppProps = {}) {
-  const storyService = useMemo(
-    () => injectedStoryService || new StoryService(),
-    [injectedStoryService]
-  )
+  // Use useRef for stable StoryService instance to avoid re-renders
+  const storyServiceRef = useRef<StoryService | null>(null)
+
+  // Initialize service instance once or when injected service changes
+  if (!storyServiceRef.current || storyServiceRef.current !== injectedStoryService) {
+    storyServiceRef.current = injectedStoryService || new StoryService()
+  }
+
+  const storyService = storyServiceRef.current
   const [currentStoryId, setCurrentStoryId] = useState<StoryId | null>(null)
   const [storyText, setStoryText] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -51,7 +56,8 @@ export function App({ storyService: injectedStoryService }: AppProps = {}) {
     }
 
     initializeApp()
-  }, [storyService])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []) // Empty dependency array since storyService is stable via useRef
 
   const handleNext = useCallback(() => {
     if (!currentStoryId || !storyService.isLoaded()) return
@@ -61,7 +67,8 @@ export function App({ storyService: injectedStoryService }: AppProps = {}) {
       setCurrentStoryId(nextId)
       setStoryText(storyService.getById(nextId))
     }
-  }, [currentStoryId, storyService])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStoryId]) // storyService is stable via useRef, no need to include
 
   const handlePrevious = useCallback(() => {
     if (!currentStoryId || !storyService.isLoaded()) return
@@ -71,7 +78,8 @@ export function App({ storyService: injectedStoryService }: AppProps = {}) {
       setCurrentStoryId(prevId)
       setStoryText(storyService.getById(prevId))
     }
-  }, [currentStoryId, storyService])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentStoryId]) // storyService is stable via useRef, no need to include
 
   // Handle keyboard navigation
   useEffect(() => {
@@ -99,9 +107,16 @@ export function App({ storyService: injectedStoryService }: AppProps = {}) {
     console.log('Jump to ID - to be implemented')
   }, [])
 
-  // Calculate navigation state
-  const canGoPrevious = currentStoryId ? canGoPrev(currentStoryId, availableIds) : false
-  const canGoNextValue = currentStoryId ? canGoNextUtil(currentStoryId, availableIds) : false
+  // Calculate navigation state with memoization
+  const canGoPrevious = useMemo(
+    () => (currentStoryId ? canGoPrev(currentStoryId, availableIds) : false),
+    [currentStoryId, availableIds]
+  )
+
+  const canGoNextValue = useMemo(
+    () => (currentStoryId ? canGoNextUtil(currentStoryId, availableIds) : false),
+    [currentStoryId, availableIds]
+  )
 
   if (error) {
     return (
