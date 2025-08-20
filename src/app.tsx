@@ -1,6 +1,6 @@
 // ABOUTME: Main application component with StoryService integration and state management
 // ABOUTME: Handles data loading, navigation, and state for the entire application
-import { useState, useEffect, useCallback } from 'preact/hooks'
+import { useState, useEffect, useCallback, useMemo } from 'preact/hooks'
 import styles from './app.module.css'
 import { Layout } from './components/Layout'
 import { Navigation } from './components/Navigation'
@@ -14,7 +14,10 @@ interface AppProps {
 }
 
 export function App({ storyService: injectedStoryService }: AppProps = {}) {
-  const storyService = injectedStoryService || new StoryService()
+  const storyService = useMemo(
+    () => injectedStoryService || new StoryService(),
+    [injectedStoryService]
+  )
   const [currentStoryId, setCurrentStoryId] = useState<StoryId | null>(null)
   const [storyText, setStoryText] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
