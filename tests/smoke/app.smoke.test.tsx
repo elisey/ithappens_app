@@ -78,7 +78,7 @@ describe('App Smoke Test', () => {
     expect(screen.getByText('ithappens')).toBeInTheDocument()
 
     await waitFor(() => {
-      expect(screen.queryByText('Загрузка истории...')).not.toBeInTheDocument()
+      expect(screen.queryByText('Загружаем истории...')).not.toBeInTheDocument()
     })
   })
 
@@ -86,7 +86,7 @@ describe('App Smoke Test', () => {
     render(<App storyService={smokeService} />)
 
     // Should show loading initially
-    expect(screen.getByText('Загрузка истории...')).toBeInTheDocument()
+    expect(screen.getByText('Загружаем истории...')).toBeInTheDocument()
 
     // Wait for story to load
     await waitFor(() => {
@@ -95,7 +95,7 @@ describe('App Smoke Test', () => {
     })
 
     // Loading should be gone
-    expect(screen.queryByText('Загрузка истории...')).not.toBeInTheDocument()
+    expect(screen.queryByText('Загружаем истории...')).not.toBeInTheDocument()
   })
 
   it('should navigate forward between stories', async () => {
@@ -221,7 +221,7 @@ describe('App Smoke Test', () => {
 
     // Should show error message
     await waitFor(() => {
-      expect(screen.getByText(/ошибка/i)).toBeInTheDocument()
+      expect(screen.getAllByText(/ошибка/i)[0]).toBeInTheDocument()
     })
 
     // Restore console.error
@@ -233,7 +233,7 @@ describe('App Smoke Test', () => {
 
     // Wait for load
     await waitFor(() => {
-      expect(screen.queryByText('Загрузка истории...')).not.toBeInTheDocument()
+      expect(screen.queryByText('Загружаем истории...')).not.toBeInTheDocument()
     })
 
     // Check all essential elements are present

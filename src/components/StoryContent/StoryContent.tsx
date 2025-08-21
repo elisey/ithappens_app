@@ -1,5 +1,6 @@
 // ABOUTME: Component for displaying story text with proper typography
 // ABOUTME: Компонент для отображения текста истории с правильной типографикой
+import { LoadingSpinner } from '../LoadingSpinner'
 import styles from './StoryContent.module.css'
 
 interface StoryContentProps {
@@ -11,7 +12,7 @@ export function StoryContent({ text, isLoading = false }: StoryContentProps) {
   if (isLoading) {
     return (
       <div className={styles.container}>
-        <div className={styles.loading}>Загрузка истории...</div>
+        <LoadingSpinner message="Загрузка истории..." size="medium" />
       </div>
     )
   }

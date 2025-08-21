@@ -36,7 +36,17 @@ describe('StoryService', () => {
       await storyService.initialize('/stories.json.sample')
 
       expect(storyService.isLoaded()).toBe(true)
-      expect(mockFetch).toHaveBeenCalledWith('/stories.json.sample')
+      expect(mockFetch).toHaveBeenCalledWith(
+        '/stories.json.sample',
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Accept: 'application/json',
+            'Cache-Control': 'no-cache',
+          }),
+          // eslint-disable-next-line no-undef
+          signal: expect.any(AbortSignal),
+        })
+      )
     })
 
     it('should handle fetch errors', async () => {
@@ -65,10 +75,10 @@ describe('StoryService', () => {
         json: async () => ({}),
       })
 
-      await storyService.initialize('/stories.json.sample')
-
-      expect(storyService.isLoaded()).toBe(true)
-      expect(storyService.getAllIds()).toEqual([])
+      await expect(storyService.initialize('/stories.json.sample')).rejects.toThrow(
+        'No stories found in data'
+      )
+      expect(storyService.isLoaded()).toBe(false)
     })
   })
 
@@ -168,13 +178,8 @@ describe('StoryService', () => {
       })
 
       it('should return null when no stories', async () => {
-        mockFetch.mockResolvedValueOnce({
-          ok: true,
-          json: async () => ({}),
-        })
         const emptyService = new StoryService()
-        await emptyService.initialize('/empty.json')
-
+        // Don't initialize with empty data since it now throws an error
         expect(emptyService.getFirstId()).toBe(null)
       })
     })
@@ -185,13 +190,8 @@ describe('StoryService', () => {
       })
 
       it('should return null when no stories', async () => {
-        mockFetch.mockResolvedValueOnce({
-          ok: true,
-          json: async () => ({}),
-        })
         const emptyService = new StoryService()
-        await emptyService.initialize('/empty.json')
-
+        // Don't initialize with empty data since it now throws an error
         expect(emptyService.getLastId()).toBe(null)
       })
     })
@@ -202,13 +202,8 @@ describe('StoryService', () => {
       })
 
       it('should return empty array when no stories', async () => {
-        mockFetch.mockResolvedValueOnce({
-          ok: true,
-          json: async () => ({}),
-        })
         const emptyService = new StoryService()
-        await emptyService.initialize('/empty.json')
-
+        // Don't initialize with empty data since it now throws an error
         expect(emptyService.getAllIds()).toEqual([])
       })
 

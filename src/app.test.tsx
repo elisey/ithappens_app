@@ -109,7 +109,7 @@ describe('App', () => {
 
     // Wait for loading to complete
     await waitFor(() => {
-      expect(screen.queryByText('Загрузка истории...')).not.toBeInTheDocument()
+      expect(screen.queryByText('Загружаем истории...')).not.toBeInTheDocument()
     })
   })
 
@@ -119,7 +119,7 @@ describe('App', () => {
 
     // Wait for loading to complete
     await waitFor(() => {
-      expect(screen.queryByText('Загрузка истории...')).not.toBeInTheDocument()
+      expect(screen.queryByText('Загружаем истории...')).not.toBeInTheDocument()
     })
   })
 
@@ -140,12 +140,14 @@ describe('App', () => {
     expect(screen.getByRole('banner')).toBeInTheDocument()
     expect(screen.getByRole('main')).toBeInTheDocument()
     expect(screen.getByRole('contentinfo')).toBeInTheDocument()
-    expect(screen.getByRole('navigation')).toBeInTheDocument()
 
     // Wait for loading to complete
     await waitFor(() => {
-      expect(screen.queryByText('Загрузка истории...')).not.toBeInTheDocument()
+      expect(screen.queryByText('Загружаем истории...')).not.toBeInTheDocument()
     })
+
+    // Navigation should be available after loading
+    expect(screen.getByRole('navigation')).toBeInTheDocument()
   })
 
   it('has skip link for accessibility', async () => {
@@ -157,7 +159,7 @@ describe('App', () => {
 
     // Wait for loading to complete
     await waitFor(() => {
-      expect(screen.queryByText('Загрузка истории...')).not.toBeInTheDocument()
+      expect(screen.queryByText('Загружаем истории...')).not.toBeInTheDocument()
     })
   })
 
@@ -166,7 +168,7 @@ describe('App', () => {
 
     // Wait for loading to complete
     await waitFor(() => {
-      expect(screen.queryByText('Загрузка истории...')).not.toBeInTheDocument()
+      expect(screen.queryByText('Загружаем истории...')).not.toBeInTheDocument()
     })
 
     const results = await axe(container)
@@ -182,7 +184,7 @@ describe('App', () => {
 
     // Wait for loading to complete
     await waitFor(() => {
-      expect(screen.queryByText('Загрузка истории...')).not.toBeInTheDocument()
+      expect(screen.queryByText('Загружаем истории...')).not.toBeInTheDocument()
     })
   })
 })
