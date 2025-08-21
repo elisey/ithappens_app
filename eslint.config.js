@@ -38,6 +38,12 @@ export default [
         beforeAll: 'readonly',
         afterAll: 'readonly',
         setTimeout: 'readonly',
+        clearTimeout: 'readonly',
+        AbortController: 'readonly',
+        AbortSignal: 'readonly',
+        Response: 'readonly',
+        MouseEvent: 'readonly',
+        global: 'writable',
       },
     },
     plugins: {

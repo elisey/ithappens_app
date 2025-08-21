@@ -43,7 +43,6 @@ describe('StoryService', () => {
             Accept: 'application/json',
             'Cache-Control': 'no-cache',
           }),
-          // eslint-disable-next-line no-undef
           signal: expect.any(AbortSignal),
         })
       )

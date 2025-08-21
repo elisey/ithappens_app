@@ -15,11 +15,9 @@ export class StoryService {
       this.loaded = false
 
       // Create AbortController for timeout handling
-      // eslint-disable-next-line no-undef
       const controller = new AbortController()
       const timeoutId = setTimeout(() => controller.abort(), timeoutMs)
 
-      // eslint-disable-next-line no-undef
       let response: Response
       try {
         response = await fetch(url, {
@@ -29,10 +27,8 @@ export class StoryService {
             'Cache-Control': 'no-cache',
           },
         })
-        // eslint-disable-next-line no-undef
         clearTimeout(timeoutId)
       } catch (fetchError) {
-        // eslint-disable-next-line no-undef
         clearTimeout(timeoutId)
 
         if (fetchError instanceof Error) {
@@ -55,7 +51,7 @@ export class StoryService {
 
       let storiesData: StoriesData
       try {
-        storiesData = await response.json()
+        storiesData = (await response.json()) as StoriesData
       } catch (parseError) {
         throw new ParseError(
           `Failed to parse stories JSON: ${parseError instanceof Error ? parseError.message : 'Unknown parse error'}`

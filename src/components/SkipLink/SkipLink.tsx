@@ -8,8 +8,7 @@ interface SkipLinkProps {
 }
 
 export function SkipLink({ targetId, children }: SkipLinkProps) {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleClick = (e: any) => {
+  const handleClick = (e: MouseEvent) => {
     e.preventDefault()
     const target = document.getElementById(targetId)
     if (target) {
