@@ -4,6 +4,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
 }
 
 .title {
@@ -41,4 +42,20 @@
 
 .error button:hover {
   opacity: 0.9;
+}
+
+.fallbackIndicator {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: var(--font-size-small);
+  color: var(--color-text-secondary);
+  background: var(--color-surface);
+  padding: var(--spacing-xs) var(--spacing-small);
+  border-radius: var(--border-radius);
+  border: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
 }

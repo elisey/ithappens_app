@@ -1,9 +1,33 @@
 // ABOUTME: Unit tests for StoryService class using TDD approach
 // ABOUTME: Tests data loading, story retrieval, and navigation functionality
 
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, beforeAll, afterAll, vi } from 'vitest'
 import { StoryService } from '../../src/services/storyService'
 import type { StoriesData } from '../../src/types/story'
+
+// Mock performance utilities to reduce console noise
+vi.mock('../../src/utils/performance', () => ({
+  measureExecutionTime: async <T>(fn: () => T | Promise<T>): Promise<T> => {
+    return await fn()
+  },
+  logMemoryUsage: vi.fn(),
+  formatBytes: (bytes: number) => `${bytes} bytes`,
+}))
+
+// Suppress performance logs during tests
+const originalConsoleLog = console.log
+beforeAll(() => {
+  console.log = vi.fn((message, ...args) => {
+    if (typeof message === 'string' && message.includes('[StoryService]')) {
+      return // Suppress performance logs
+    }
+    originalConsoleLog(message, ...args)
+  })
+})
+
+afterAll(() => {
+  console.log = originalConsoleLog
+})
 
 // Mock data for testing
 const mockStoriesData: StoriesData = {

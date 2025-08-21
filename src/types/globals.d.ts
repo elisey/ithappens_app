@@ -40,6 +40,28 @@ declare global {
       headers?: Record<string, string>
     }
   ): Promise<Response>
+
+  // Performance API for timing measurements
+  const performance: {
+    now(): number
+    mark(name: string): void
+    measure(measureName: string, startMark: string, endMark: string): void
+    getEntriesByName(name: string): PerformanceEntry[]
+    clearMarks(name: string): void
+    clearMeasures(name: string): void
+    memory?: {
+      usedJSHeapSize: number
+      totalJSHeapSize: number
+      jsHeapSizeLimit: number
+    }
+  }
+
+  interface PerformanceEntry {
+    name: string
+    entryType: string
+    startTime: number
+    duration: number
+  }
 }
 
 export {}

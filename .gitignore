@@ -36,3 +36,6 @@ coverage/
 
 # Lefthook local configuration
 .lefthookrc
+
+# Full dataset file (large file, not for version control)
+public/stories.json

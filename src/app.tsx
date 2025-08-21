@@ -8,6 +8,7 @@ import { Layout } from './components/Layout'
 import { LoadingSpinner } from './components/LoadingSpinner'
 import { Navigation } from './components/Navigation'
 import { StoryContent } from './components/StoryContent'
+import { getAppConfig, getFallbackStoriesUrl } from './config/app.config'
 import { StoryService } from './services/storyService'
 import { createAppError } from './types/errors'
 import type { BaseAppError } from './types/errors'
@@ -38,15 +39,37 @@ export function App({ storyService: injectedStoryService }: AppProps = {}) {
   const [isJumpModalOpen, setIsJumpModalOpen] = useState(false)
   const [retryCount, setRetryCount] = useState(0)
   const [maxRetries] = useState(3)
+  const [usedFallback, setUsedFallback] = useState(false)
 
   // Initialize story service and load first story
   useEffect(() => {
     const initializeApp = async () => {
+      const config = getAppConfig()
+
       try {
         setIsLoading(true)
         setError(null)
+        setUsedFallback(false)
 
-        await storyService.initialize('/stories.json.sample')
+        // Try to load primary dataset
+        try {
+          await storyService.initialize(config.storiesUrl, config.maxLoadingTime)
+        } catch (primaryError) {
+          console.warn('Primary dataset failed to load, trying fallback:', primaryError)
+
+          // Only try fallback if we're not already using the sample data
+          if (config.storiesUrl !== getFallbackStoriesUrl()) {
+            await storyService.initialize(getFallbackStoriesUrl(), config.maxLoadingTime)
+            setUsedFallback(true)
+
+            if (config.enablePerformanceLogging) {
+              console.log('✅ [Fallback] Successfully loaded sample dataset')
+            }
+          } else {
+            // Primary is already the fallback, so re-throw the error
+            throw primaryError
+          }
+        }
 
         const firstId = storyService.getFirstId()
         if (firstId) {
@@ -55,6 +78,14 @@ export function App({ storyService: injectedStoryService }: AppProps = {}) {
           setCurrentStoryId(firstId)
           setStoryText(storyService.getById(firstId))
           setRetryCount(0) // Reset retry count on successful load
+
+          // Log successful initialization
+          const metrics = storyService.getLoadingMetrics()
+          if (config.enablePerformanceLogging && metrics) {
+            console.log(
+              `🎉 [App] Initialized with ${metrics.storyCount} stories in ${metrics.loadTime.toFixed(2)}ms`
+            )
+          }
         } else {
           setError(createAppError(new Error('Нет доступных историй')))
         }
@@ -76,11 +107,32 @@ export function App({ storyService: injectedStoryService }: AppProps = {}) {
   const handleRetry = useCallback(() => {
     if (retryCount < maxRetries) {
       const initializeApp = async () => {
+        const config = getAppConfig()
+
         try {
           setIsLoading(true)
           setError(null)
+          setUsedFallback(false)
 
-          await storyService.initialize('/stories.json.sample')
+          // Try to load primary dataset
+          try {
+            await storyService.initialize(config.storiesUrl, config.maxLoadingTime)
+          } catch (primaryError) {
+            console.warn('Primary dataset failed to load on retry, trying fallback:', primaryError)
+
+            // Only try fallback if we're not already using the sample data
+            if (config.storiesUrl !== getFallbackStoriesUrl()) {
+              await storyService.initialize(getFallbackStoriesUrl(), config.maxLoadingTime)
+              setUsedFallback(true)
+
+              if (config.enablePerformanceLogging) {
+                console.log('✅ [Fallback] Successfully loaded sample dataset on retry')
+              }
+            } else {
+              // Primary is already the fallback, so re-throw the error
+              throw primaryError
+            }
+          }
 
           const firstId = storyService.getFirstId()
           if (firstId) {
@@ -194,6 +246,11 @@ export function App({ storyService: injectedStoryService }: AppProps = {}) {
         header={
           <div className={styles.headerContent}>
             <h1 className={styles.title}>ithappens</h1>
+            {usedFallback && (
+              <div className={styles.fallbackIndicator} title="Используется тестовый датасет">
+                📁 Sample Data
+              </div>
+            )}
           </div>
         }
         footer={<div />}
@@ -215,6 +272,11 @@ export function App({ storyService: injectedStoryService }: AppProps = {}) {
         header={
           <div className={styles.headerContent}>
             <h1 className={styles.title}>ithappens</h1>
+            {usedFallback && (
+              <div className={styles.fallbackIndicator} title="Используется тестовый датасет">
+                📁 Sample Data
+              </div>
+            )}
           </div>
         }
         footer={<div />}
@@ -229,6 +291,11 @@ export function App({ storyService: injectedStoryService }: AppProps = {}) {
       header={
         <div className={styles.headerContent}>
           <h1 className={styles.title}>ithappens</h1>
+          {usedFallback && (
+            <div className={styles.fallbackIndicator} title="Используется тестовый датасет">
+              📁 Sample Data
+            </div>
+          )}
         </div>
       }
       footer={
