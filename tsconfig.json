@@ -24,6 +24,12 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "src/types/globals.d.ts",
+    "tests/**/*.ts",
+    "tests/**/*.tsx"
+  ],
   "references": [{ "path": "./tsconfig.node.json" }]
 }

@@ -7,5 +7,5 @@ export interface NavigationProps {
   onJump: () => void
   canGoPrevious?: boolean
   canGoNext?: boolean
-  currentId?: number
+  currentId?: number | null
 }

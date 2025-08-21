@@ -50,12 +50,29 @@ task clean
 
 ```
 src/
-├── components/          # React components
+├── components/          # Preact components
+│   ├── ErrorBoundary/   # Error handling UI with retry functionality
+│   ├── LoadingSpinner/  # Animated loading indicators
+│   ├── Navigation/      # Story navigation controls
+│   ├── StoryContent/    # Story display and formatting
+│   ├── Layout/         # App layout structure
+│   └── JumpToIdModal/  # Jump-to-story modal
 ├── services/           # Business logic and API
-├── utils/              # Utilities
+│   └── storyService.ts # Story data management with error handling
+├── utils/              # Utility functions
+│   └── navigation.ts   # Navigation calculations
 ├── types/              # TypeScript types
-├── data/               # Static data
-└── tests/              # Test setup
+│   ├── errors.ts       # Typed error classes
+│   ├── story.ts        # Story-related types
+│   └── globals.d.ts    # Global type declarations
+└── tests/              # Test configuration
+    └── setup.ts        # Global test setup
+
+tests/
+├── utils/              # Test utilities and helpers
+├── components/         # Component-specific tests
+├── services/           # Service layer tests
+└── smoke/              # End-to-end smoke tests
 ```
 
 ## Technology Stack
@@ -63,9 +80,36 @@ src/
 - **Frontend:** Preact + TypeScript
 - **Build Tool:** Vite
 - **Styles:** CSS Modules
-- **Testing:** Vitest + Testing Library
-- **Code Quality:** ESLint + Prettier
-- **Automation:** Task
+- **Testing:** Vitest + Testing Library + Custom Test Helpers
+- **Code Quality:** ESLint + Prettier + TypeScript Strict Mode
+- **Error Handling:** Typed error system with user-friendly UI
+- **Automation:** Task + npm scripts
+
+## Key Features
+
+### 🎨 User Experience
+
+- **Smooth Loading States:** Animated loading spinners with accessibility support
+- **Comprehensive Error Handling:** User-friendly error messages with actionable solutions
+- **Keyboard Navigation:** Full keyboard support (Arrow keys, Enter)
+- **Responsive Design:** Works on mobile and desktop
+- **Accessibility:** WCAG compliant with proper ARIA attributes
+
+### 🛠️ Developer Experience
+
+- **TypeScript Strict Mode:** Full type safety with zero `any` types
+- **Standardized Testing:** Consistent test patterns with helper utilities
+- **Error Recovery:** Automatic retry mechanisms for network errors
+- **Hot Reload:** Fast development with Vite HMR
+- **Code Quality:** Automated linting, formatting, and pre-commit hooks
+
+### 🔧 Technical Capabilities
+
+- **Circular Navigation:** Seamless story-to-story navigation with gap handling
+- **Timeout Handling:** Request timeouts with automatic retry
+- **Progressive Enhancement:** Graceful degradation for missing features
+- **Bundle Optimization:** Tree-shaking and code splitting
+- **Test Coverage:** Comprehensive unit, integration, and smoke tests
 
 ## Git Hooks
 
@@ -93,4 +137,27 @@ Validates commit message format:
 
 ## Development Commands
 
-All main commands are available through Task. It's recommended to use `task check` before each commit to ensure code quality.
+All main commands are available through npm scripts or Task:
+
+```bash
+# Quality checks
+npm run lint              # ESLint check
+npm run lint:fix          # Auto-fix ESLint issues
+npm run type-check        # TypeScript type checking
+npm run quality-check     # Complete quality check suite
+
+# Pre-commit verification
+npm run pre-commit        # Same checks as git pre-commit hook
+```
+
+It's recommended to use `npm run quality-check` or `task check` before each commit to ensure code quality.
+
+## Getting Started for New Developers
+
+1. **Setup**: Follow installation steps above
+2. **Read**: Check `docs/DEVELOPMENT.md` for detailed guidelines
+3. **Test**: Run `npm run test:watch` to see tests in action
+4. **Develop**: Use `npm run dev` and make changes
+5. **Quality**: Run `npm run quality-check` before committing
+
+The codebase uses modern patterns with full TypeScript support and comprehensive error handling.
