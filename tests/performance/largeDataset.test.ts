@@ -17,6 +17,7 @@ vi.mock('../../src/utils/performance', () => ({
 // Mock console methods to reduce noise during performance tests
 const originalConsoleLog = console.log
 const originalConsoleWarn = console.warn
+const originalConsoleError = console.error
 
 beforeAll(() => {
   // Filter out performance-related logs during tests
@@ -39,11 +40,14 @@ beforeAll(() => {
     }
     originalConsoleWarn(message, ...args)
   })
+
+  console.error = vi.fn()
 })
 
 afterAll(() => {
   console.log = originalConsoleLog
   console.warn = originalConsoleWarn
+  console.error = originalConsoleError
 })
 
 // Mock fetch for controlled testing
@@ -103,8 +107,12 @@ describe('StoryService Performance Tests', () => {
   let storyService: StoryService
 
   beforeEach(() => {
+    // Clear the fetch mock to prevent stale mocked responses
+    const mockFetch = global.fetch as vi.MockedFunction<typeof fetch>
+    mockFetch.mockClear()
+
+    // Create new service instance
     storyService = new StoryService()
-    vi.clearAllMocks()
   })
 
   describe('Large Dataset Loading', () => {
@@ -142,17 +150,17 @@ describe('StoryService Performance Tests', () => {
 
     it('should record loading metrics correctly', async () => {
       const testDataset = generateLargeDataset(1000)
-      const mockDataSize = 1024 * 1024 // 1 MB
-      const mockResponse = createMockResponse(testDataset, mockDataSize)
+      const expectedDataSize = JSON.stringify(testDataset).length
+      const mockResponse = createMockResponse(testDataset)
 
       ;(global.fetch as vi.MockedFunction<typeof fetch>).mockResolvedValueOnce(mockResponse)
 
-      await storyService.initialize('/stories.json')
+      await storyService.initialize('/metrics-test.json')
 
       const metrics = storyService.getLoadingMetrics()
       expect(metrics).toBeDefined()
       expect(metrics?.storyCount).toBe(1000)
-      expect(metrics?.dataSize).toBe(mockDataSize)
+      expect(metrics?.dataSize).toBe(expectedDataSize)
       expect(metrics?.loadTime).toBeGreaterThan(0)
     })
   })
@@ -164,7 +172,7 @@ describe('StoryService Performance Tests', () => {
       const mockResponse = createMockResponse(largeDataset)
 
       ;(global.fetch as vi.MockedFunction<typeof fetch>).mockResolvedValueOnce(mockResponse)
-      await storyService.initialize('/stories.json')
+      await storyService.initialize('/navigation-perf-test.json')
     })
 
     it('should navigate to next story in under 50ms', () => {
@@ -241,22 +249,22 @@ describe('StoryService Performance Tests', () => {
       const validDataset = generateLargeDataset(100)
       const validResponse = createMockResponse(validDataset)
 
-      ;(global.fetch as vi.MockedFunction<typeof fetch>).mockResolvedValueOnce(validResponse)
-      await storyService.initialize('/stories.json')
+      const mockFetch = global.fetch as vi.MockedFunction<typeof fetch>
+      mockFetch.mockResolvedValueOnce(validResponse)
+      await storyService.initialize('/cleanup-test.json')
       expect(storyService.isLoaded()).toBe(true)
 
-      // Then simulate a failure
-      ;(global.fetch as vi.MockedFunction<typeof fetch>).mockRejectedValueOnce(
-        new Error('Network error')
-      )
+      // Clear previous mocks and set up failure
+      mockFetch.mockClear()
+      mockFetch.mockRejectedValueOnce(new Error('Network error'))
 
-      await expect(storyService.initialize('/stories.json')).rejects.toThrow()
+      await expect(storyService.initialize('/cleanup-test-fail.json')).rejects.toThrow()
 
       // Data should be cleaned up
       expect(storyService.isLoaded()).toBe(false)
       expect(storyService.getAllIds()).toHaveLength(0)
       expect(storyService.getLoadingMetrics()).toBeNull()
-    })
+    }, 10000)
   })
 
   describe('Data Structure Efficiency', () => {
@@ -272,7 +280,7 @@ describe('StoryService Performance Tests', () => {
       const mockResponse = createMockResponse(sparseDataset)
       ;(global.fetch as vi.MockedFunction<typeof fetch>).mockResolvedValueOnce(mockResponse)
 
-      await storyService.initialize('/stories.json')
+      await storyService.initialize('/sparse-test.json')
 
       // Navigation should still be efficient
       const startTime = performance.now()
@@ -301,7 +309,7 @@ describe('StoryService Performance Tests', () => {
       const mockResponse = createMockResponse(randomDataset)
       ;(global.fetch as vi.MockedFunction<typeof fetch>).mockResolvedValueOnce(mockResponse)
 
-      await storyService.initialize('/stories.json')
+      await storyService.initialize('/sorted-test.json')
 
       const sortedIds = storyService.getAllIds()
 

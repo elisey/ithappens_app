@@ -7,6 +7,9 @@ import { App } from '../../src/app'
 import { StoryService } from '../../src/services/storyService'
 import type { StoriesData } from '../../src/types/story'
 
+// Mock the useStoryService hook module-level
+vi.mock('../../src/hooks/useStoryService')
+
 // Mock data factory for consistent test data
 export const createMockStoriesData = (overrides?: Record<string, string>): StoriesData => ({
   '1': 'First test story with sample content',
@@ -30,6 +33,10 @@ export const createMockStoryService = (data: StoriesData = createMockStoriesData
         .map((id) => parseInt(id, 10))
         .sort((a, b) => a - b)
       this.mockLoaded = true
+    }
+
+    async initializeWithCallbacks(): Promise<void> {
+      await this.initialize()
     }
 
     getById(id: number): string | null {
@@ -109,9 +116,26 @@ export const setupMockFetchError = (error: Error | { status: number; statusText:
 }
 
 // App component renderer with mocks
-export const renderAppWithMocks = (props: { storyService?: StoryService } = {}) => {
+export const renderAppWithMocks = async (props: { storyService?: StoryService } = {}) => {
   const mockService = props.storyService || createMockStoryService()
-  return render(<App storyService={mockService} />)
+
+  // Initialize the mock service
+  if (!mockService.isLoaded()) {
+    await mockService.initialize()
+  }
+
+  // Mock the useStoryService hook to return our mock service
+  const { useStoryService } = await import('../../src/hooks/useStoryService')
+  vi.mocked(useStoryService).mockReturnValue({
+    service: mockService,
+    isLoading: false,
+    loadingStatus: null,
+    error: null,
+    retry: vi.fn(),
+    progress: undefined,
+  })
+
+  return render(<App />)
 }
 
 // Common wait utilities
