@@ -2,12 +2,14 @@
 // ABOUTME: Handles data loading, navigation, and state for the entire application
 import { useState, useEffect, useCallback, useMemo } from 'preact/hooks'
 import styles from './app.module.css'
+import { DevPanel } from './components/DevPanel'
 import { JumpToIdModal } from './components/JumpToIdModal'
 import { Layout } from './components/Layout'
 import { LoadingScreen } from './components/LoadingScreen'
 import { Navigation } from './components/Navigation'
 import { StoryContent } from './components/StoryContent'
 import { getAppConfig } from './config/app.config'
+import { usePerformanceMonitor } from './hooks/usePerformanceMonitor'
 import { useStoryService } from './hooks/useStoryService'
 import type { StoryId } from './types/story'
 import { canGoNext as canGoNextUtil, canGoPrev } from './utils/navigation'
@@ -25,6 +27,9 @@ export function App() {
     url: config.storiesUrl,
     timeout: config.maxLoadingTime,
   })
+
+  // Performance monitoring
+  const { metrics, health, isEnabled: monitoringEnabled } = usePerformanceMonitor()
 
   const [currentStoryId, setCurrentStoryId] = useState<StoryId | null>(null)
   const [storyText, setStoryText] = useState<string | null>(null)
@@ -137,30 +142,33 @@ export function App() {
   }
 
   return (
-    <Layout
-      header={
-        <div className={styles.headerContent}>
-          <h1 className={styles.title}>ithappens</h1>
-        </div>
-      }
-      footer={
-        <Navigation
-          onPrevious={handlePrevious}
-          onNext={handleNext}
-          onJump={handleJumpToId}
-          currentId={currentStoryId}
-          canGoPrevious={canGoPrevious}
-          canGoNext={canGoNextValue}
+    <>
+      <Layout
+        header={
+          <div className={styles.headerContent}>
+            <h1 className={styles.title}>ithappens</h1>
+          </div>
+        }
+        footer={
+          <Navigation
+            onPrevious={handlePrevious}
+            onNext={handleNext}
+            onJump={handleJumpToId}
+            currentId={currentStoryId}
+            canGoPrevious={canGoPrevious}
+            canGoNext={canGoNextValue}
+          />
+        }
+      >
+        <StoryContent text={storyText} isLoading={false} />
+        <JumpToIdModal
+          isOpen={isJumpModalOpen}
+          onClose={handleJumpModalClose}
+          onJump={handleJumpSubmit}
+          availableIds={availableIds}
         />
-      }
-    >
-      <StoryContent text={storyText} isLoading={false} />
-      <JumpToIdModal
-        isOpen={isJumpModalOpen}
-        onClose={handleJumpModalClose}
-        onJump={handleJumpSubmit}
-        availableIds={availableIds}
-      />
-    </Layout>
+      </Layout>
+      <DevPanel metrics={metrics} health={health} isVisible={monitoringEnabled} />
+    </>
   )
 }

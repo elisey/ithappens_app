@@ -5,6 +5,7 @@ import { createAppError } from '../types/errors'
 import type { StoriesData, StoryId } from '../types/story'
 import { measureExecutionTime, logMemoryUsage, formatBytes } from '../utils/performance'
 import { DataLoader } from './dataLoader'
+import { performanceMonitor } from './performanceMonitor'
 import { StorageCache } from './storageCache'
 
 export type LoadingStatus = 'initializing' | 'loading' | 'parsing' | 'indexing'
@@ -60,6 +61,9 @@ export class StoryService {
   ): Promise<void> {
     const startTime = performance.now()
     logMemoryUsage('StoryService initialization start')
+
+    // Start performance monitoring
+    performanceMonitor.startMeasure('load')
 
     try {
       callbacks?.onStatusChange?.('initializing')
@@ -120,7 +124,9 @@ export class StoryService {
       callbacks?.onStatusChange?.('parsing')
       callbacks?.onProgress?.(50)
 
+      performanceMonitor.startMeasure('parse')
       const data = await this.loader.parseJSON<StoriesData>(cachedText)
+      performanceMonitor.endMeasure('parse')
 
       // Validate cached data
       if (this.loader.validateStoriesData(data)) {
@@ -200,17 +206,21 @@ export class StoryService {
     callbacks?.onProgress?.(80)
 
     // Optimize indexing for large datasets
+    performanceMonitor.startMeasure('indexing')
     await measureExecutionTime(() => {
       this.stories = storiesData
       const keys = Object.keys(storiesData)
       this.sortedIds = keys.map((id) => parseInt(id, 10)).sort((a, b) => a - b)
     }, 'Index and sort story IDs')
+    performanceMonitor.endMeasure('indexing')
 
     callbacks?.onProgress?.(100)
     this.loaded = true
 
     // Record loading metrics
     const endTime = performance.now()
+    performanceMonitor.endMeasure('load')
+
     this.loadingMetrics = {
       loadTime: endTime - startTime,
       dataSize: this.estimateDataSize(),
@@ -218,8 +228,16 @@ export class StoryService {
       fromCache,
     }
 
+    // Update performance monitor with metrics
+    performanceMonitor.setMetric('storyCount', this.sortedIds.length)
+
     logMemoryUsage('StoryService initialization complete')
     this.logLoadingMetrics()
+
+    // Log performance metrics in dev mode
+    if (performanceMonitor.isEnabled()) {
+      performanceMonitor.logMetrics()
+    }
   }
 
   getById(id: StoryId): string | null {
