@@ -5,7 +5,7 @@
 import { render, screen, waitFor } from '@testing-library/preact'
 import userEvent from '@testing-library/user-event'
 import { afterEach, beforeEach, describe, expect, test, vi } from 'vitest'
-import { App } from '../../src/App'
+import { App } from '../../src/app'
 import type { StoriesData } from '../../src/types/story'
 
 // Mock stories data - simulating large dataset
