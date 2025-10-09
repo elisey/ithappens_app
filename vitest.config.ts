@@ -8,6 +8,8 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/tests/setup.ts'],
     globals: true,
+    include: ['**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
+    exclude: ['**/node_modules/**', '**/dist/**', '**/*.bench.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     coverage: {
       reporter: ['text', 'html', 'lcov'],
       exclude: [
@@ -18,6 +20,9 @@ export default defineConfig({
         '**/*.d.ts',
         'src/main.tsx',
       ],
+    },
+    benchmark: {
+      include: ['**/*.bench.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     },
   },
   resolve: {
