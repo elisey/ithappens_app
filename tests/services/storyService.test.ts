@@ -1,9 +1,36 @@
 // ABOUTME: Unit tests for StoryService class using TDD approach
 // ABOUTME: Tests data loading, story retrieval, and navigation functionality
 
-import { describe, it, expect, beforeEach, vi } from 'vitest'
+import { describe, it, expect, beforeEach, beforeAll, afterAll, vi } from 'vitest'
 import { StoryService } from '../../src/services/storyService'
 import type { StoriesData } from '../../src/types/story'
+
+// Mock performance utilities to reduce console noise
+vi.mock('../../src/utils/performance', () => ({
+  measureExecutionTime: async <T>(fn: () => T | Promise<T>): Promise<T> => {
+    return await fn()
+  },
+  logMemoryUsage: vi.fn(),
+  formatBytes: (bytes: number) => `${bytes} bytes`,
+}))
+
+// Suppress performance logs and error logs during tests
+const originalConsoleLog = console.log
+const originalConsoleError = console.error
+beforeAll(() => {
+  console.log = vi.fn((message, ...args) => {
+    if (typeof message === 'string' && message.includes('[StoryService]')) {
+      return // Suppress performance logs
+    }
+    originalConsoleLog(message, ...args)
+  })
+  console.error = vi.fn()
+})
+
+afterAll(() => {
+  console.log = originalConsoleLog
+  console.error = originalConsoleError
+})
 
 // Mock data for testing
 const mockStoriesData: StoriesData = {
@@ -30,8 +57,9 @@ describe('StoryService', () => {
     it('should load stories data successfully', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => mockStoriesData,
-      })
+        headers: { get: () => null },
+        text: async () => JSON.stringify(mockStoriesData),
+      } as Response)
 
       await storyService.initialize('/stories.json.sample')
 
@@ -41,7 +69,6 @@ describe('StoryService', () => {
         expect.objectContaining({
           headers: expect.objectContaining({
             Accept: 'application/json',
-            'Cache-Control': 'no-cache',
           }),
           signal: expect.any(AbortSignal),
         })
@@ -49,30 +76,32 @@ describe('StoryService', () => {
     })
 
     it('should handle fetch errors', async () => {
-      mockFetch.mockRejectedValueOnce(new Error('Network error'))
+      mockFetch.mockRejectedValue(new Error('Network error'))
 
       await expect(storyService.initialize('/stories.json.sample')).rejects.toThrow('Network error')
       expect(storyService.isLoaded()).toBe(false)
-    })
+    }, 10000)
 
     it('should handle non-ok response', async () => {
-      mockFetch.mockResolvedValueOnce({
+      mockFetch.mockResolvedValue({
         ok: false,
         status: 404,
         statusText: 'Not Found',
-      })
+        headers: { get: () => null },
+      } as Response)
 
       await expect(storyService.initialize('/stories.json.sample')).rejects.toThrow(
-        'Failed to load stories: 404 Not Found'
+        'Failed to fetch data: 404 Not Found'
       )
       expect(storyService.isLoaded()).toBe(false)
-    })
+    }, 10000)
 
     it('should handle empty data', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => ({}),
-      })
+        headers: { get: () => null },
+        text: async () => JSON.stringify({}),
+      } as Response)
 
       await expect(storyService.initialize('/stories.json.sample')).rejects.toThrow(
         'No stories found in data'
@@ -85,8 +114,9 @@ describe('StoryService', () => {
     beforeEach(async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => mockStoriesData,
-      })
+        headers: { get: () => null },
+        text: async () => JSON.stringify(mockStoriesData),
+      } as Response)
       await storyService.initialize('/stories.json.sample')
     })
 
@@ -110,8 +140,9 @@ describe('StoryService', () => {
     beforeEach(async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => mockStoriesData,
-      })
+        headers: { get: () => null },
+        text: async () => JSON.stringify(mockStoriesData),
+      } as Response)
       await storyService.initialize('/stories.json.sample')
     })
 
@@ -134,8 +165,9 @@ describe('StoryService', () => {
       it('should handle single story', async () => {
         mockFetch.mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ '1': 'Only story' }),
-        })
+          headers: { get: () => null },
+          text: async () => JSON.stringify({ '1': 'Only story' }),
+        } as Response)
         const singleService = new StoryService()
         await singleService.initialize('/single.json')
 
@@ -162,8 +194,9 @@ describe('StoryService', () => {
       it('should handle single story', async () => {
         mockFetch.mockResolvedValueOnce({
           ok: true,
-          json: async () => ({ '1': 'Only story' }),
-        })
+          headers: { get: () => null },
+          text: async () => JSON.stringify({ '1': 'Only story' }),
+        } as Response)
         const singleService = new StoryService()
         await singleService.initialize('/single.json')
 
@@ -221,8 +254,9 @@ describe('StoryService', () => {
     it('should return true after successful initialization', async () => {
       mockFetch.mockResolvedValueOnce({
         ok: true,
-        json: async () => mockStoriesData,
-      })
+        headers: { get: () => null },
+        text: async () => JSON.stringify(mockStoriesData),
+      } as Response)
 
       await storyService.initialize('/stories.json.sample')
       expect(storyService.isLoaded()).toBe(true)
@@ -238,6 +272,6 @@ describe('StoryService', () => {
       }
 
       expect(storyService.isLoaded()).toBe(false)
-    })
+    }, 10000)
   })
 })

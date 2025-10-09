@@ -1,17 +1,21 @@
 // ABOUTME: Smoke test for basic app functionality and integration
 // ABOUTME: Tests end-to-end functionality without complex mocking
 
-import { screen, fireEvent } from '@testing-library/preact'
+import { render, screen, fireEvent } from '@testing-library/preact'
 import { describe, it, expect, vi, beforeEach } from 'vitest'
+import { App } from '../../src/app'
+import { useStoryService } from '../../src/hooks/useStoryService'
 import {
   createMockStoryService,
   createMockStoriesData,
-  renderAppWithMocks,
   waitForStoryLoad,
   waitForError,
   getNavigationButtons,
   cleanupMocks,
 } from '../utils/testHelpers'
+
+// Mock the useStoryService hook
+vi.mock('../../src/hooks/useStoryService')
 
 // Custom mock data for smoke tests
 const smokeTestData = createMockStoriesData({
@@ -21,37 +25,42 @@ const smokeTestData = createMockStoriesData({
 describe('App Smoke Test', () => {
   let smokeService: ReturnType<typeof createMockStoryService>
 
-  beforeEach(() => {
+  beforeEach(async () => {
     cleanupMocks()
     smokeService = createMockStoryService(smokeTestData)
+    await smokeService.initialize()
+
+    // Mock the useStoryService hook to return our mock service
+    vi.mocked(useStoryService).mockReturnValue({
+      service: smokeService,
+      isLoading: false,
+      loadingStatus: null,
+      error: null,
+      retry: vi.fn(),
+      progress: undefined,
+    })
   })
 
   it('should render the app without crashing', () => {
-    expect(() => renderAppWithMocks({ storyService: smokeService })).not.toThrow()
+    expect(() => render(<App />)).not.toThrow()
   })
 
   it('should display app title', async () => {
-    renderAppWithMocks({ storyService: smokeService })
+    render(<App />)
     expect(screen.getByText('ithappens')).toBeInTheDocument()
     await waitForStoryLoad()
   })
 
   it('should load and display first story', async () => {
-    renderAppWithMocks({ storyService: smokeService })
-
-    // Should show loading initially
-    expect(screen.getByText('Загружаем истории...')).toBeInTheDocument()
+    render(<App />)
 
     // Wait for story to load
     await waitForStoryLoad('First test story with sample content')
     expect(screen.getByText('ID: 1')).toBeInTheDocument()
-
-    // Loading should be gone
-    expect(screen.queryByText('Загружаем истории...')).not.toBeInTheDocument()
   })
 
   it('should navigate forward between stories', async () => {
-    renderAppWithMocks({ storyService: smokeService })
+    render(<App />)
 
     // Wait for initial load
     await waitForStoryLoad('First test story with sample content')
@@ -65,7 +74,7 @@ describe('App Smoke Test', () => {
   })
 
   it('should navigate backward between stories', async () => {
-    renderAppWithMocks({ storyService: smokeService })
+    render(<App />)
 
     // Wait for initial load and go to second story
     await waitForStoryLoad('First test story with sample content')
@@ -83,7 +92,7 @@ describe('App Smoke Test', () => {
   })
 
   it('should handle circular navigation (last to first)', async () => {
-    renderAppWithMocks({ storyService: smokeService })
+    render(<App />)
 
     // Wait for initial load
     await waitForStoryLoad('First test story with sample content')
@@ -97,7 +106,7 @@ describe('App Smoke Test', () => {
   })
 
   it('should handle gap navigation correctly', async () => {
-    renderAppWithMocks({ storyService: smokeService })
+    render(<App />)
 
     // Wait for initial load
     await waitForStoryLoad('First test story with sample content')
@@ -125,7 +134,7 @@ describe('App Smoke Test', () => {
   })
 
   it('should preserve line breaks in story content', async () => {
-    renderAppWithMocks({ storyService: smokeService })
+    render(<App />)
 
     // Navigate to story with line breaks (story 2)
     await waitForStoryLoad('First test story with sample content')
@@ -140,14 +149,20 @@ describe('App Smoke Test', () => {
   })
 
   it('should handle error states gracefully', async () => {
-    // Create a service that will fail initialization
-    const mockService = createMockStoryService()
-    vi.spyOn(mockService, 'initialize').mockRejectedValue(new Error('Network error'))
-
     // Suppress console.error for this test since we expect an error
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
 
-    renderAppWithMocks({ storyService: mockService })
+    // Clear the default mock and set error state
+    vi.mocked(useStoryService).mockReturnValue({
+      service: null,
+      isLoading: false,
+      loadingStatus: null,
+      error: new Error('Network error'),
+      retry: vi.fn(),
+      progress: undefined,
+    })
+
+    render(<App />)
 
     // Should show error message
     await waitForError()
@@ -157,7 +172,7 @@ describe('App Smoke Test', () => {
   })
 
   it('should render all essential UI elements', async () => {
-    renderAppWithMocks({ storyService: smokeService })
+    render(<App />)
 
     // Wait for load
     await waitForStoryLoad()

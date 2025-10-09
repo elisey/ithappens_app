@@ -2,11 +2,15 @@
 // ABOUTME: Тесты для главного компонента приложения, проверка рендеринга и отображения текста
 import { render, screen, waitFor } from '@testing-library/preact'
 import { axe, toHaveNoViolations } from 'jest-axe'
+import { vi, beforeEach } from 'vitest'
 import { App } from './app'
 import { StoryService } from './services/storyService'
 import type { StoriesData } from './types/story'
 
 expect.extend(toHaveNoViolations)
+
+// Mock the useStoryService hook
+vi.mock('./hooks/useStoryService')
 
 // Mock data for tests
 const mockStoriesData: StoriesData = {
@@ -99,32 +103,34 @@ class MockStoryService extends StoryService {
 describe('App', () => {
   let mockStoryService: MockStoryService
 
-  beforeEach(() => {
+  beforeEach(async () => {
     mockStoryService = new MockStoryService()
+    await mockStoryService.initialize()
+
+    // Mock the useStoryService hook to return our mock service
+    const { useStoryService } = await import('./hooks/useStoryService')
+    vi.mocked(useStoryService).mockReturnValue({
+      service: mockStoryService,
+      isLoading: false,
+      loadingStatus: null,
+      error: null,
+      retry: vi.fn(),
+      progress: undefined,
+    })
   })
 
   it('renders without crashing', async () => {
-    render(<App storyService={mockStoryService} />)
+    render(<App />)
     expect(screen.getByRole('heading')).toBeInTheDocument()
-
-    // Wait for loading to complete
-    await waitFor(() => {
-      expect(screen.queryByText('Загружаем истории...')).not.toBeInTheDocument()
-    })
   })
 
   it('displays the app title', async () => {
-    render(<App storyService={mockStoryService} />)
+    render(<App />)
     expect(screen.getByText('ithappens')).toBeInTheDocument()
-
-    // Wait for loading to complete
-    await waitFor(() => {
-      expect(screen.queryByText('Загружаем истории...')).not.toBeInTheDocument()
-    })
   })
 
   it('displays story content', async () => {
-    render(<App storyService={mockStoryService} />)
+    render(<App />)
 
     // Wait for story to load and check content
     await waitFor(() => {
@@ -135,7 +141,7 @@ describe('App', () => {
   })
 
   it('has correct landmarks', async () => {
-    render(<App storyService={mockStoryService} />)
+    render(<App />)
 
     expect(screen.getByRole('banner')).toBeInTheDocument()
     expect(screen.getByRole('main')).toBeInTheDocument()
@@ -151,7 +157,7 @@ describe('App', () => {
   })
 
   it('has skip link for accessibility', async () => {
-    render(<App storyService={mockStoryService} />)
+    render(<App />)
 
     const skipLink = screen.getByText('Перейти к содержанию')
     expect(skipLink).toBeInTheDocument()
@@ -164,7 +170,7 @@ describe('App', () => {
   })
 
   it('should have no accessibility violations', async () => {
-    const { container } = render(<App storyService={mockStoryService} />)
+    const { container } = render(<App />)
 
     // Wait for loading to complete
     await waitFor(() => {
@@ -176,7 +182,7 @@ describe('App', () => {
   })
 
   it('main content is focusable for skip link', async () => {
-    render(<App storyService={mockStoryService} />)
+    render(<App />)
 
     const mainContent = screen.getByRole('main')
     expect(mainContent).toHaveAttribute('tabIndex', '-1')

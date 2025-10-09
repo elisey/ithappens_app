@@ -4,6 +4,7 @@
 export enum ErrorType {
   NETWORK = 'NETWORK',
   PARSE = 'PARSE',
+  VALIDATION = 'VALIDATION',
   NOT_FOUND = 'NOT_FOUND',
   TIMEOUT = 'TIMEOUT',
   UNKNOWN = 'UNKNOWN',
@@ -131,6 +132,25 @@ export class TimeoutError extends BaseAppError {
 
     super(message, ErrorType.TIMEOUT, userMessage, solutions, true)
     this.timeoutMs = timeoutMs
+  }
+}
+
+export class ValidationError extends BaseAppError {
+  constructor(message: string) {
+    const userMessage = 'Данные имеют неверный формат.'
+    const solutions: ErrorSolution[] = [
+      {
+        title: 'Попробуйте перезагрузить',
+        description: 'Данные могут быть обновлены на сервере',
+        action: 'reload',
+      },
+      {
+        title: 'Свяжитесь с поддержкой',
+        description: 'Если проблема повторяется, сообщите разработчикам',
+      },
+    ]
+
+    super(message, ErrorType.VALIDATION, userMessage, solutions, false)
   }
 }
 

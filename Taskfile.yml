@@ -13,6 +13,11 @@ tasks:
     cmds:
       - npm run dev
 
+  dev:network:
+    desc: 'Start development server with network access (for mobile testing)'
+    cmds:
+      - npm run dev:network
+
   build:
     desc: 'Build for production (runs check first)'
     deps: [check]

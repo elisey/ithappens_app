@@ -10,6 +10,18 @@ import prettier from 'eslint-config-prettier'
 export default [
   js.configs.recommended,
   {
+    files: ['**/*.js'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        console: 'readonly',
+        process: 'readonly',
+        __dirname: 'readonly',
+      },
+    },
+  },
+  {
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
       parser: tsparser,
@@ -43,6 +55,12 @@ export default [
         AbortSignal: 'readonly',
         Response: 'readonly',
         MouseEvent: 'readonly',
+        performance: 'readonly',
+        Headers: 'readonly',
+        Blob: 'readonly',
+        FormData: 'readonly',
+        sessionStorage: 'readonly',
+        localStorage: 'readonly',
         global: 'writable',
       },
     },

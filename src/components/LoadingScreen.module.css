@@ -1,0 +1,110 @@
+/* ABOUTME: Minimalist full-screen loading overlay styles
+ * ABOUTME: Supports light and dark themes with centered content layout */
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-background);
+  z-index: 9999;
+}
+
+.content {
+  text-align: center;
+  padding: 2rem;
+  max-width: 90%;
+}
+
+.statusMessage {
+  font-size: 1.25rem;
+  font-weight: 400;
+  color: var(--color-text-primary);
+  margin: 0;
+  line-height: 1.5;
+}
+
+.progress {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  margin-top: 1rem;
+  margin-bottom: 0;
+}
+
+.errorMessage {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--color-error);
+  margin: 0 0 0.5rem 0;
+}
+
+.errorDetails {
+  font-size: 1rem;
+  color: var(--color-text-secondary);
+  margin: 0 0 2rem 0;
+  line-height: 1.5;
+}
+
+.retryButton {
+  font-size: 1rem;
+  font-weight: 500;
+  padding: 0.75rem 2rem;
+  border: 2px solid var(--color-text-primary);
+  background: transparent;
+  color: var(--color-text-primary);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px;
+}
+
+.retryButton:hover {
+  background: var(--color-text-primary);
+  color: var(--color-background);
+}
+
+.retryButton:focus {
+  outline: 2px solid var(--color-focus);
+  outline-offset: 2px;
+}
+
+.retryButton:active {
+  transform: translateY(1px);
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .overlay {
+    background-color: var(--color-background, #1a1a1a);
+  }
+
+  .statusMessage {
+    color: var(--color-text-primary, #e0e0e0);
+  }
+
+  .progress {
+    color: var(--color-text-secondary, #a0a0a0);
+  }
+
+  .errorMessage {
+    color: var(--color-error, #ff6b6b);
+  }
+
+  .errorDetails {
+    color: var(--color-text-secondary, #a0a0a0);
+  }
+
+  .retryButton {
+    border-color: var(--color-text-primary, #e0e0e0);
+    color: var(--color-text-primary, #e0e0e0);
+  }
+
+  .retryButton:hover {
+    background: var(--color-text-primary, #e0e0e0);
+    color: var(--color-background, #1a1a1a);
+  }
+}

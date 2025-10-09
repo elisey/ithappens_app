@@ -11,4 +11,11 @@ export default defineConfig({
       '@': resolve(__dirname, 'src'),
     },
   },
+  define: {
+    // Ensure environment variables are available at build time
+    'import.meta.env.VITE_USE_SAMPLE_DATA': JSON.stringify(process.env.VITE_USE_SAMPLE_DATA),
+    'import.meta.env.VITE_ENABLE_PERF_LOGGING': JSON.stringify(
+      process.env.VITE_ENABLE_PERF_LOGGING
+    ),
+  },
 })
