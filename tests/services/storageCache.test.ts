@@ -1,7 +1,6 @@
 // ABOUTME: Tests for StorageCache service - chunked storage and cache management
 // ABOUTME: Tests sessionStorage operations with large data
 
-/* eslint-disable no-undef */
 import { describe, it, expect, beforeEach, afterEach } from 'vitest'
 import { StorageCache } from '../../src/services/storageCache'
 

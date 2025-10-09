@@ -25,7 +25,8 @@
       "Bash(npx eslint:*)",
       "Bash(node:*)",
       "Bash(npm run type-check:*)",
-      "Bash(npm run quality-check:*)"
+      "Bash(npm run quality-check:*)",
+      "Bash(npm run test:e2e:*)"
     ],
     "deny": [],
     "ask": []

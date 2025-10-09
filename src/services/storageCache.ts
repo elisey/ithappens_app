@@ -1,7 +1,6 @@
 // ABOUTME: SessionStorage cache for fast app restarts with chunked storage
 // ABOUTME: Handles large data by splitting into chunks to avoid storage limits
 
-/* eslint-disable no-undef */
 import { logError } from '../utils/errorHandling'
 
 export interface CacheMetadata {
