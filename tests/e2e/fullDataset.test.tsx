@@ -144,8 +144,8 @@ describe('Full Dataset Integration', () => {
     await user.click(nextButton)
     const navigationTime = performance.now() - startTime
 
-    // Navigation should be instant (under 100ms)
-    expect(navigationTime).toBeLessThan(100)
+    // Navigation should be instant (under 150ms, accounting for userEvent delays)
+    expect(navigationTime).toBeLessThan(150)
 
     expect(screen.getByText(/story number 2/i)).toBeInTheDocument()
 

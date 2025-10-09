@@ -7,7 +7,7 @@ import { JumpToIdModal } from './components/JumpToIdModal'
 import { Layout } from './components/Layout'
 import { LoadingScreen } from './components/LoadingScreen'
 import { Navigation } from './components/Navigation'
-import { StoryContent } from './components/StoryContent'
+import { StoryViewer } from './components/StoryContent'
 import { getAppConfig } from './config/app.config'
 import { usePerformanceMonitor } from './hooks/usePerformanceMonitor'
 import { useStoryService } from './hooks/useStoryService'
@@ -160,7 +160,7 @@ export function App() {
           />
         }
       >
-        <StoryContent text={storyText} isLoading={false} />
+        <StoryViewer storyId={currentStoryId} storyText={storyText} isLoading={false} />
         <JumpToIdModal
           isOpen={isJumpModalOpen}
           onClose={handleJumpModalClose}
