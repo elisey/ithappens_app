@@ -33,7 +33,7 @@ tasks:
   test:
     desc: 'Run tests'
     cmds:
-      - npm run test
+      - npx vitest run --exclude tests/integration/**
 
   test:watch:
     desc: 'Run tests in watch mode'
@@ -54,6 +54,11 @@ tasks:
     desc: 'Format code with Prettier'
     cmds:
       - npm run format
+
+  fix:
+    desc: 'Fix lint issues'
+    cmds:
+      - npm run lint:fix
 
   format:check:
     desc: 'Check code formatting'

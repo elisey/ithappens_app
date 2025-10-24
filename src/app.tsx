@@ -4,11 +4,13 @@ import { useState, useEffect, useCallback, useMemo } from 'preact/hooks'
 import styles from './app.module.css'
 import { DevPanel } from './components/DevPanel'
 import { JumpToIdModal } from './components/JumpToIdModal'
+import { KeyboardHelp } from './components/KeyboardHelp'
 import { Layout } from './components/Layout'
 import { LoadingScreen } from './components/LoadingScreen'
 import { Navigation } from './components/Navigation'
 import { StoryViewer } from './components/StoryContent'
 import { getAppConfig } from './config/app.config'
+import { useKeyboardNavigation } from './hooks/useKeyboardNavigation'
 import { usePerformanceMonitor } from './hooks/usePerformanceMonitor'
 import { useStoryService } from './hooks/useStoryService'
 import type { StoryId } from './types/story'
@@ -35,6 +37,7 @@ export function App() {
   const [storyText, setStoryText] = useState<string | null>(null)
   const [availableIds, setAvailableIds] = useState<StoryId[]>([])
   const [isJumpModalOpen, setIsJumpModalOpen] = useState(false)
+  const [isHelpVisible, setIsHelpVisible] = useState(false)
 
   // Load first story when service is ready
   useEffect(() => {
@@ -77,26 +80,9 @@ export function App() {
     }
   }, [currentStoryId, storyService])
 
-  // Handle keyboard navigation
-  useEffect(() => {
-    const handleKeyPress = (event: globalThis.KeyboardEvent) => {
-      if (!currentStoryId || isLoading) return
-
-      switch (event.key) {
-        case 'ArrowLeft':
-          event.preventDefault()
-          handlePrevious()
-          break
-        case 'ArrowRight':
-          event.preventDefault()
-          handleNext()
-          break
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyPress)
-    return () => document.removeEventListener('keydown', handleKeyPress)
-  }, [currentStoryId, isLoading, handleNext, handlePrevious])
+  const handleToggleHelp = useCallback(() => {
+    setIsHelpVisible((prev) => !prev)
+  }, [])
 
   const handleJumpToId = useCallback(() => {
     setIsJumpModalOpen(true)
@@ -122,6 +108,24 @@ export function App() {
     setIsJumpModalOpen(false)
   }, [])
 
+  const handleHelpClose = useCallback(() => {
+    setIsHelpVisible(false)
+  }, [])
+
+  // Setup keyboard navigation with all handlers
+  const { shortcuts } = useKeyboardNavigation(
+    {
+      onNext: handleNext,
+      onPrevious: handlePrevious,
+      onJump: handleJumpToId,
+      onHelp: handleToggleHelp,
+    },
+    {
+      enabled: !isJumpModalOpen && !isHelpVisible,
+      preventDefault: true,
+    }
+  )
+
   // Calculate navigation state with memoization
   const canGoPrevious = useMemo(
     () => (currentStoryId ? canGoPrev(currentStoryId, availableIds) : false),
@@ -146,7 +150,17 @@ export function App() {
       <Layout
         header={
           <div className={styles.headerContent}>
+            <div style={{ width: '32px', flexShrink: 0 }} />
             <h1 className={styles.title}>ithappens</h1>
+            <button
+              type="button"
+              className={styles.helpButton}
+              onClick={handleToggleHelp}
+              aria-label="Show keyboard shortcuts"
+              title="Keyboard shortcuts (?)"
+            >
+              ?
+            </button>
           </div>
         }
         footer={
@@ -167,6 +181,7 @@ export function App() {
           onJump={handleJumpSubmit}
           availableIds={availableIds}
         />
+        <KeyboardHelp isVisible={isHelpVisible} onClose={handleHelpClose} shortcuts={shortcuts} />
       </Layout>
       <DevPanel metrics={metrics} health={health} isVisible={monitoringEnabled} />
     </>

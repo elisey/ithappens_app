@@ -3,8 +3,9 @@
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   position: relative;
+  gap: var(--spacing-medium);
 }
 
 .title {
@@ -13,6 +14,9 @@
   margin: 0;
   color: var(--color-text);
   font-weight: 600;
+  flex: 1;
+  text-align: center;
+  padding: 0 var(--spacing-medium);
 }
 
 .error {
@@ -58,4 +62,34 @@
   display: flex;
   align-items: center;
   gap: var(--spacing-xs);
+}
+
+.helpButton {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.helpButton:hover {
+  background: var(--color-accent);
+  color: var(--color-background);
+  border-color: var(--color-accent);
+}
+
+.helpButton:focus {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
 }
