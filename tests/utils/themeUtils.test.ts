@@ -1,6 +1,5 @@
 // ABOUTME: Unit tests for theme utility functions
 // ABOUTME: Tests system detection, localStorage operations, and theme application
-/* eslint-disable no-undef */
 
 import { beforeEach, describe, expect, test, vi } from 'vitest'
 import {

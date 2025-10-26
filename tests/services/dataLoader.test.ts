@@ -1,7 +1,6 @@
 // ABOUTME: Tests for DataLoader service - streaming, progress, retry logic
 // ABOUTME: Covers successful loading, error scenarios, and edge cases
 
-/* eslint-disable no-undef */
 import { describe, it, expect, vi, beforeEach } from 'vitest'
 import { DataLoader } from '../../src/services/dataLoader'
 import { NetworkError, ParseError, TimeoutError, ValidationError } from '../../src/types/errors'

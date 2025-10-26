@@ -1,7 +1,6 @@
 // ABOUTME: Comprehensive error scenario tests for data loading
 // ABOUTME: Tests network failures, timeouts, corrupted data, and recovery strategies
 
-/* eslint-disable no-undef */
 import { describe, it, expect, vi, beforeEach, beforeAll, afterAll } from 'vitest'
 import { DataLoader } from '../../src/services/dataLoader'
 import { NetworkError, ParseError, ValidationError, TimeoutError } from '../../src/types/errors'
