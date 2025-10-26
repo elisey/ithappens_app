@@ -16,6 +16,7 @@ import { useKeyboardNavigation } from './hooks/useKeyboardNavigation'
 import { usePerformanceMonitor } from './hooks/usePerformanceMonitor'
 import { useStoryService } from './hooks/useStoryService'
 import { useTheme } from './hooks/useTheme'
+import { storageService } from './services/storageService'
 import type { StoryId } from './types/story'
 import { isTouchDevice } from './utils/deviceUtils'
 import { canGoNext as canGoNextUtil, canGoPrev } from './utils/navigation'
@@ -46,27 +47,77 @@ export function App() {
   const [availableIds, setAvailableIds] = useState<StoryId[]>([])
   const [isJumpModalOpen, setIsJumpModalOpen] = useState(false)
   const [isHelpVisible, setIsHelpVisible] = useState(false)
+  const [isInitializing, setIsInitializing] = useState(true)
 
-  // Load first story when service is ready
+  // Load first story or restore from storage when service is ready
   useEffect(() => {
     if (!storyService || !storyService.isLoaded()) return
 
-    const firstId = storyService.getFirstId()
-    if (firstId) {
-      const ids = storyService.getAllIds()
-      setAvailableIds(ids)
-      setCurrentStoryId(firstId)
-      setStoryText(storyService.getById(firstId))
+    async function initializeStory() {
+      // Capture service reference for use in async function
+      const service = storyService
+      if (!service) return
 
-      // Log successful initialization
-      const metrics = storyService.getLoadingMetrics()
-      if (config.enablePerformanceLogging && metrics) {
-        console.log(
-          `🎉 [App] Initialized with ${metrics.storyCount} stories in ${metrics.loadTime.toFixed(2)}ms`
-        )
+      try {
+        const ids = service.getAllIds()
+        setAvailableIds(ids)
+
+        // Try to restore last story ID from storage
+        const lastId = await storageService.getLastStoryId()
+
+        let storyIdToShow: StoryId
+
+        if (lastId && service.getById(lastId)) {
+          // Valid saved ID - restore it
+          storyIdToShow = lastId
+          console.log(`[App] Restored story ID ${lastId} from storage`)
+        } else {
+          // No saved ID or invalid - use first story
+          storyIdToShow = service.getFirstId()!
+          if (lastId && !service.getById(lastId)) {
+            console.warn(
+              `[App] Saved story ID ${lastId} no longer exists, falling back to first story`
+            )
+          }
+        }
+
+        setCurrentStoryId(storyIdToShow)
+        setStoryText(service.getById(storyIdToShow))
+
+        // Log successful initialization
+        const metrics = service.getLoadingMetrics()
+        if (config.enablePerformanceLogging && metrics) {
+          console.log(
+            `🎉 [App] Initialized with ${metrics.storyCount} stories in ${metrics.loadTime.toFixed(2)}ms`
+          )
+        }
+      } catch (error) {
+        console.error('[App] Failed to initialize story:', error)
+        // Still show first story on error
+        const firstId = service.getFirstId()
+        if (firstId) {
+          setCurrentStoryId(firstId)
+          setStoryText(service.getById(firstId))
+        }
+      } finally {
+        setIsInitializing(false)
       }
     }
+
+    initializeStory()
   }, [storyService, config.enablePerformanceLogging])
+
+  // Auto-save current story ID when it changes
+  useEffect(() => {
+    // Don't save during initialization to avoid unnecessary writes
+    if (currentStoryId === null || isInitializing) return
+
+    // Save to storage
+    storageService.setLastStoryId(currentStoryId).catch((error) => {
+      // Log but don't block - storage failures shouldn't break navigation
+      console.warn('[App] Failed to save story ID to storage:', error)
+    })
+  }, [currentStoryId, isInitializing])
 
   const handleNext = useCallback(() => {
     if (!currentStoryId || !storyService || !storyService.isLoaded()) return

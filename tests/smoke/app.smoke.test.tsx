@@ -26,6 +26,10 @@ describe('App Smoke Test', () => {
   let smokeService: ReturnType<typeof createMockStoryService>
 
   beforeEach(async () => {
+    // Clear storage before each test to ensure clean state
+    localStorage.clear()
+    sessionStorage.clear()
+
     cleanupMocks()
     smokeService = createMockStoryService(smokeTestData)
     await smokeService.initialize()
@@ -39,6 +43,12 @@ describe('App Smoke Test', () => {
       retry: vi.fn(),
       progress: undefined,
     })
+  })
+
+  afterEach(() => {
+    // Clean up storage after each test
+    localStorage.clear()
+    sessionStorage.clear()
   })
 
   it('should render the app without crashing', () => {
