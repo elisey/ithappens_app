@@ -1,0 +1,221 @@
+/* ABOUTME: Theme system with CSS variables for light and dark modes */
+/* ABOUTME: Supports automatic switching based on system preferences */
+
+/* Light theme (default) */
+:root {
+  /* Background colors */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f5f5f5;
+  --color-bg-overlay: rgba(0, 0, 0, 0.5);
+
+  /* Text colors */
+  --color-text-primary: #333333;
+  --color-text-secondary: #666666;
+  --color-text-muted: #999999;
+
+  /* Border colors */
+  --color-border: #e0e0e0;
+  --color-border-focus: #4a90e2;
+
+  /* Legacy variable aliases for backward compatibility */
+  --color-background: var(--color-bg-primary);
+  --color-text: var(--color-text-primary);
+  --color-border-light: var(--color-bg-secondary);
+
+  /* Button colors */
+  --color-button-bg: #f0f0f0;
+  --color-button-bg-hover: #e8e8e8;
+  --color-button-bg-active: #d0d0d0;
+  --color-button-text: #333333;
+  --color-button-disabled: #cccccc;
+
+  /* State colors */
+  --color-error: #d32f2f;
+  --color-success: #388e3c;
+  --color-warning: #f57c00;
+  --color-info: #1976d2;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.16);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.19);
+
+  /* Transitions */
+  --transition-duration: 200ms;
+  --transition-easing: ease-in-out;
+}
+
+/* Dark theme (system preference) */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Background colors */
+    --color-bg-primary: #1a1a1a;
+    --color-bg-secondary: #2a2a2a;
+    --color-bg-overlay: rgba(0, 0, 0, 0.7);
+
+    /* Text colors */
+    --color-text-primary: #e0e0e0;
+    --color-text-secondary: #b0b0b0;
+    --color-text-muted: #808080;
+
+    /* Border colors */
+    --color-border: #404040;
+    --color-border-focus: #5a9fd4;
+
+    /* Legacy variable aliases for backward compatibility */
+    --color-background: var(--color-bg-primary);
+    --color-text: var(--color-text-primary);
+    --color-border-light: var(--color-bg-secondary);
+
+    /* Button colors */
+    --color-button-bg: #2a2a2a;
+    --color-button-bg-hover: #3a3a3a;
+    --color-button-bg-active: #4a4a4a;
+    --color-button-text: #e0e0e0;
+    --color-button-disabled: #555555;
+
+    /* State colors - slightly brighter for dark theme */
+    --color-error: #f44336;
+    --color-success: #4caf50;
+    --color-warning: #ff9800;
+    --color-info: #2196f3;
+
+    /* Shadows - more pronounced for dark theme */
+    --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.24);
+    --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.32);
+    --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.38);
+  }
+}
+
+/* Force light theme */
+[data-theme='light'] {
+  /* Background colors */
+  --color-bg-primary: #ffffff;
+  --color-bg-secondary: #f5f5f5;
+  --color-bg-overlay: rgba(0, 0, 0, 0.5);
+
+  /* Text colors */
+  --color-text-primary: #333333;
+  --color-text-secondary: #666666;
+  --color-text-muted: #999999;
+
+  /* Border colors */
+  --color-border: #e0e0e0;
+  --color-border-focus: #4a90e2;
+
+  /* Legacy variable aliases for backward compatibility */
+  --color-background: var(--color-bg-primary);
+  --color-text: var(--color-text-primary);
+  --color-border-light: var(--color-bg-secondary);
+
+  /* Button colors */
+  --color-button-bg: #f0f0f0;
+  --color-button-bg-hover: #e8e8e8;
+  --color-button-bg-active: #d0d0d0;
+  --color-button-text: #333333;
+  --color-button-disabled: #cccccc;
+
+  /* State colors */
+  --color-error: #d32f2f;
+  --color-success: #388e3c;
+  --color-warning: #f57c00;
+  --color-info: #1976d2;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.12);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.16);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.19);
+
+  /* Ensure color-scheme is set */
+  color-scheme: light;
+}
+
+/* Force dark theme */
+[data-theme='dark'] {
+  /* Background colors */
+  --color-bg-primary: #1a1a1a;
+  --color-bg-secondary: #2a2a2a;
+  --color-bg-overlay: rgba(0, 0, 0, 0.7);
+
+  /* Text colors */
+  --color-text-primary: #e0e0e0;
+  --color-text-secondary: #b0b0b0;
+  --color-text-muted: #808080;
+
+  /* Border colors */
+  --color-border: #404040;
+  --color-border-focus: #5a9fd4;
+
+  /* Legacy variable aliases for backward compatibility */
+  --color-background: var(--color-bg-primary);
+  --color-text: var(--color-text-primary);
+  --color-border-light: var(--color-bg-secondary);
+
+  /* Button colors */
+  --color-button-bg: #2a2a2a;
+  --color-button-bg-hover: #3a3a3a;
+  --color-button-bg-active: #4a4a4a;
+  --color-button-text: #e0e0e0;
+  --color-button-disabled: #555555;
+
+  /* State colors */
+  --color-error: #f44336;
+  --color-success: #4caf50;
+  --color-warning: #ff9800;
+  --color-info: #2196f3;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.24);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.32);
+  --shadow-lg: 0 10px 20px rgba(0, 0, 0, 0.38);
+
+  /* Ensure color-scheme is set */
+  color-scheme: dark;
+}
+
+/* Smooth transitions for theme changes */
+body,
+body * {
+  transition:
+    background-color var(--transition-duration) var(--transition-easing),
+    color var(--transition-duration) var(--transition-easing),
+    border-color var(--transition-duration) var(--transition-easing);
+}
+
+/* Disable transitions for elements that shouldn't animate */
+body *:focus,
+body *:active,
+body [data-no-theme-transition] {
+  transition: none;
+}
+
+/* Custom scrollbar for dark theme */
+@media (prefers-color-scheme: dark) {
+  ::-webkit-scrollbar {
+    width: 12px;
+    background: var(--color-bg-secondary);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-border);
+    border-radius: 6px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-text-muted);
+  }
+}
+
+[data-theme='dark'] ::-webkit-scrollbar {
+  width: 12px;
+  background: var(--color-bg-secondary);
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 6px;
+}
+
+[data-theme='dark'] ::-webkit-scrollbar-thumb:hover {
+  background: var(--color-text-muted);
+}

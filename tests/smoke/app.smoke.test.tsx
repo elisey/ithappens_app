@@ -69,7 +69,8 @@ describe('App Smoke Test', () => {
     const { next } = getNavigationButtons()
     fireEvent.click(next)
 
-    await waitForStoryLoad('Second story')
+    await waitForStoryLoad()
+    expect(screen.getByRole('article')).toHaveTextContent('Second story')
     expect(screen.getByText('ID: 2')).toBeInTheDocument()
   })
 
@@ -81,7 +82,8 @@ describe('App Smoke Test', () => {
 
     const { next, previous } = getNavigationButtons()
     fireEvent.click(next)
-    await waitForStoryLoad('Second story')
+    await waitForStoryLoad()
+    expect(screen.getByRole('article')).toHaveTextContent('Second story')
     expect(screen.getByText('ID: 2')).toBeInTheDocument()
 
     // Navigate backward
@@ -116,7 +118,8 @@ describe('App Smoke Test', () => {
 
     // Navigate through all stories to test gap handling (1 -> 2 -> 3 -> 5)
     fireEvent.click(next)
-    await waitForStoryLoad('Second story')
+    await waitForStoryLoad()
+    expect(screen.getByRole('article')).toHaveTextContent('Second story')
     expect(screen.getByText('ID: 2')).toBeInTheDocument()
 
     fireEvent.click(next)
@@ -143,9 +146,12 @@ describe('App Smoke Test', () => {
     const { next } = getNavigationButtons()
     fireEvent.click(next)
 
-    await waitForStoryLoad('Second story')
-    expect(screen.getByText('with multiple lines')).toBeInTheDocument()
-    expect(screen.getByText('for testing')).toBeInTheDocument()
+    await waitForStoryLoad()
+    // Check that text with line breaks is preserved
+    const article = screen.getByRole('article')
+    expect(article).toHaveTextContent('Second story')
+    expect(article).toHaveTextContent('with multiple lines')
+    expect(article).toHaveTextContent('for testing')
   })
 
   it('should handle error states gracefully', async () => {

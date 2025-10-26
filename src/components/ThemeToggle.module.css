@@ -1,0 +1,91 @@
+/* ABOUTME: Styles for ThemeToggle component with minimal design */
+/* ABOUTME: Supports both toggle button and select dropdown modes */
+
+.container {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm, 8px);
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm, 8px);
+  padding: var(--space-sm, 8px);
+  background: var(--color-button-bg, #f0f0f0);
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: var(--border-radius, 4px);
+  color: var(--color-button-text, #333333);
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+
+.toggle:hover {
+  background: var(--color-button-bg-hover, #e8e8e8);
+}
+
+.toggle:active {
+  background: var(--color-button-bg-active, #d0d0d0);
+}
+
+.toggle:focus-visible {
+  outline: 2px solid var(--color-border-focus, #4a90e2);
+  outline-offset: 2px;
+}
+
+.icon {
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.label {
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+.select {
+  padding: var(--space-sm, 8px);
+  background: var(--color-button-bg, #f0f0f0);
+  border: 1px solid var(--color-border, #e0e0e0);
+  border-radius: var(--border-radius, 4px);
+  color: var(--color-button-text, #333333);
+  cursor: pointer;
+  font-size: 14px;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease;
+}
+
+.select:hover {
+  background: var(--color-button-bg-hover, #e8e8e8);
+}
+
+.select:focus-visible {
+  outline: 2px solid var(--color-border-focus, #4a90e2);
+  outline-offset: 2px;
+}
+
+/* Remove default arrow in some browsers and use custom styling */
+.select {
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23333' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  padding-right: 28px;
+}
+
+@media (prefers-color-scheme: dark) {
+  .select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23e0e0e0' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
+  }
+}
+
+[data-theme='dark'] .select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23e0e0e0' d='M6 8L2 4h8z'/%3E%3C/svg%3E");
+}

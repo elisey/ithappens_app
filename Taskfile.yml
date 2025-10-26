@@ -55,6 +55,11 @@ tasks:
     cmds:
       - npm run format
 
+  fix:
+    desc: 'Fix lint issues'
+    cmds:
+      - npm run lint:fix
+
   format:check:
     desc: 'Check code formatting'
     cmds:

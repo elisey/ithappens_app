@@ -5,7 +5,10 @@ import { App } from './app'
 
 // Import global styles
 import './styles/variables.css'
+import './styles/themes.css'
 import './styles/reset.css'
 import './styles/typography.css'
+import './styles/global.css'
+import './styles/animations.css'
 
 render(<App />, document.getElementById('app')!)
