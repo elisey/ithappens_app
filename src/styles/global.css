@@ -1,0 +1,136 @@
+/* ABOUTME: Global styles for accessibility, animations, and mobile optimizations */
+/* ABOUTME: Includes reduced motion support, touch target sizing, and responsive adjustments */
+
+/* Focus для доступности */
+:focus-visible {
+  outline: 2px solid var(--color-border-focus);
+  outline-offset: 2px;
+}
+
+/* Убрать outline для мыши */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Анимации только если не отключены */
+@media (prefers-reduced-motion: no-preference) {
+  * {
+    transition:
+      color var(--transition-duration) ease,
+      background-color var(--transition-duration) ease,
+      border-color var(--transition-duration) ease,
+      transform var(--transition-duration) ease,
+      opacity var(--transition-duration) ease;
+  }
+}
+
+/* Отключение анимаций для пользователей с prefers-reduced-motion */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Мобильные оптимизации */
+@media (max-width: 640px) {
+  html {
+    font-size: 17px; /* Крупнее для мобильных */
+  }
+
+  /* Увеличенные touch targets */
+  button,
+  a,
+  [role='button'],
+  [role='link'] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+
+  /* Улучшенное tap highlight */
+  * {
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0.1);
+  }
+}
+
+/* Landscape режим на мобильных */
+@media (orientation: landscape) and (max-height: 500px) {
+  :root {
+    --header-height: 48px;
+    --footer-height: 56px;
+  }
+
+  /* Компактные отступы для landscape */
+  .layout-header,
+  .layout-footer {
+    padding: var(--space-sm) var(--space-md);
+  }
+}
+
+/* Адаптация для very large screens */
+@media (min-width: 1200px) {
+  :root {
+    --font-size-base: 18px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  :root {
+    --color-border: #000000;
+    --focus-ring-width: 3px;
+  }
+}
+
+/* Скрытие для screen readers */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
+}
+
+/* Skip to content link */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 0;
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  padding: var(--space-sm) var(--space-md);
+  text-decoration: none;
+  z-index: 100;
+}
+
+.skip-link:focus {
+  top: 0;
+}
+
+/* Loading states */
+.is-loading {
+  cursor: wait;
+  pointer-events: none;
+  opacity: 0.6;
+}
+
+/* Disabled states */
+:disabled,
+[aria-disabled='true'] {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+/* Selection styling */
+::selection {
+  background-color: var(--color-info);
+  color: var(--color-bg-primary);
+}

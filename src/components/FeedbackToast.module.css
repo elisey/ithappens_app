@@ -1,0 +1,76 @@
+.container {
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  pointer-events: none;
+}
+
+.container.top {
+  top: var(--space-lg);
+}
+
+.container.bottom {
+  bottom: calc(var(--footer-height) + var(--space-lg));
+}
+
+.toast {
+  background: var(--color-bg-primary);
+  color: var(--color-text-primary);
+  padding: var(--space-md) var(--space-lg);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--color-border);
+  min-width: 200px;
+  max-width: 400px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  pointer-events: auto;
+}
+
+.toast.info {
+  border-color: var(--color-info);
+}
+
+.toast.success {
+  border-color: var(--color-success);
+}
+
+.toast.error {
+  border-color: var(--color-error);
+}
+
+.icon {
+  flex-shrink: 0;
+  font-size: 20px;
+}
+
+.message {
+  flex: 1;
+  font-size: 14px;
+  line-height: 1.4;
+}
+
+/* Animation classes are added via animations.css */
+.entering {
+  animation: slideUp 200ms ease;
+}
+
+.exiting {
+  animation: fadeOut 200ms ease;
+}
+
+/* Mobile optimizations */
+@media (max-width: 640px) {
+  .container {
+    left: var(--space-md);
+    right: var(--space-md);
+    transform: none;
+  }
+
+  .toast {
+    width: 100%;
+    max-width: none;
+  }
+}

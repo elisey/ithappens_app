@@ -10,12 +10,14 @@ import { LoadingScreen } from './components/LoadingScreen'
 import { Navigation } from './components/Navigation'
 import { StoryViewer } from './components/StoryContent'
 import { ThemeToggle } from './components/ThemeToggle'
+import { TouchGestures } from './components/TouchGestures'
 import { getAppConfig } from './config/app.config'
 import { useKeyboardNavigation } from './hooks/useKeyboardNavigation'
 import { usePerformanceMonitor } from './hooks/usePerformanceMonitor'
 import { useStoryService } from './hooks/useStoryService'
 import { useTheme } from './hooks/useTheme'
 import type { StoryId } from './types/story'
+import { isTouchDevice } from './utils/deviceUtils'
 import { canGoNext as canGoNextUtil, canGoPrev } from './utils/navigation'
 
 export function App() {
@@ -151,7 +153,7 @@ export function App() {
     return <LoadingScreen error={error} onRetry={retry} />
   }
 
-  return (
+  const content = (
     <>
       <Layout
         header={
@@ -192,4 +194,19 @@ export function App() {
       <DevPanel metrics={metrics} health={health} isVisible={monitoringEnabled} />
     </>
   )
+
+  // Wrap with TouchGestures on touch devices
+  if (isTouchDevice()) {
+    return (
+      <TouchGestures
+        onSwipeLeft={canGoNextValue ? handleNext : undefined}
+        onSwipeRight={canGoPrevious ? handlePrevious : undefined}
+        disabled={isJumpModalOpen || isHelpVisible}
+      >
+        {content}
+      </TouchGestures>
+    )
+  }
+
+  return content
 }
