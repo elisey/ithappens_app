@@ -5,6 +5,7 @@ import { App } from './app'
 
 // Import global styles
 import './styles/variables.css'
+import './styles/themes.css'
 import './styles/reset.css'
 import './styles/typography.css'
 

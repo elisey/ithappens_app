@@ -33,7 +33,7 @@ tasks:
   test:
     desc: 'Run tests'
     cmds:
-      - npx vitest run --exclude tests/integration/**
+      - npm run test
 
   test:watch:
     desc: 'Run tests in watch mode'

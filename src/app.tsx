@@ -9,15 +9,21 @@ import { Layout } from './components/Layout'
 import { LoadingScreen } from './components/LoadingScreen'
 import { Navigation } from './components/Navigation'
 import { StoryViewer } from './components/StoryContent'
+import { ThemeToggle } from './components/ThemeToggle'
 import { getAppConfig } from './config/app.config'
 import { useKeyboardNavigation } from './hooks/useKeyboardNavigation'
 import { usePerformanceMonitor } from './hooks/usePerformanceMonitor'
 import { useStoryService } from './hooks/useStoryService'
+import { useTheme } from './hooks/useTheme'
 import type { StoryId } from './types/story'
 import { canGoNext as canGoNextUtil, canGoPrev } from './utils/navigation'
 
 export function App() {
   const config = getAppConfig()
+
+  // Theme management
+  useTheme()
+
   const {
     service: storyService,
     isLoading,
@@ -150,7 +156,7 @@ export function App() {
       <Layout
         header={
           <div className={styles.headerContent}>
-            <div style={{ width: '32px', flexShrink: 0 }} />
+            <ThemeToggle mode="toggle" />
             <h1 className={styles.title}>ithappens</h1>
             <button
               type="button"

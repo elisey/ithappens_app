@@ -30,7 +30,8 @@
       "Bash(npm run bench:run:*)",
       "Bash(npm run test:unit:*)",
       "Bash(npx vitest:*)",
-      "Bash(npm run:*)"
+      "Bash(npm run:*)",
+      "Bash(npx prettier:*)"
     ],
     "deny": [],
     "ask": []
