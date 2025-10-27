@@ -33,6 +33,7 @@ export default [
         console: 'readonly',
         Response: 'readonly',
         Headers: 'readonly',
+        URL: 'readonly',
       },
     },
   },

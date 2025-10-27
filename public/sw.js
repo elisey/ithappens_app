@@ -23,6 +23,7 @@ self.addEventListener('install', (event) => {
       .open(CACHE_NAME)
       .then((cache) => {
         console.log('[SW] Caching app shell and content')
+        console.log('[SW] Assets to cache:', ASSETS_TO_CACHE)
         return cache.addAll(ASSETS_TO_CACHE)
       })
       .then(() => {
@@ -32,6 +33,9 @@ self.addEventListener('install', (event) => {
       })
       .catch((error) => {
         console.error('[SW] Failed to cache assets:', error)
+        console.error('[SW] Error details:', error.message, error.stack)
+        // Still skip waiting even if caching fails
+        return self.skipWaiting()
       })
   )
 })
@@ -62,6 +66,15 @@ self.addEventListener('activate', (event) => {
 
 // Fetch event - Cache First strategy
 self.addEventListener('fetch', (event) => {
+  // Only handle same-origin requests or specific cross-origin requests
+  const requestUrl = new URL(event.request.url)
+  const isSameOrigin = requestUrl.origin === self.location.origin
+
+  if (!isSameOrigin) {
+    // Let cross-origin requests pass through
+    return
+  }
+
   event.respondWith(
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
@@ -84,11 +97,12 @@ self.addEventListener('fetch', (event) => {
             return networkResponse
           }
 
-          // Cache the new resource for future use
+          // Cache the new resource for future use (especially JS/CSS bundles)
           const responseToCache = networkResponse.clone()
 
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache)
+            console.log('[SW] Cached new resource:', event.request.url)
           })
 
           return networkResponse
@@ -98,7 +112,14 @@ self.addEventListener('fetch', (event) => {
           // If offline and resource not cached, return a meaningful error
           // For navigation requests, try to return cached index.html
           if (event.request.mode === 'navigate') {
-            return caches.match('/index.html')
+            console.log('[SW] Navigation failed, trying index.html fallback')
+            return caches.match('/index.html').then((response) => {
+              if (response) {
+                return response
+              }
+              // Try root as fallback
+              return caches.match('/')
+            })
           }
           // For other requests, let them fail gracefully
           return new Response('Offline - resource not available', {
