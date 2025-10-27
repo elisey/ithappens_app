@@ -8,6 +8,8 @@ interface AppConfig {
   maxLoadingTime: number // ms
   retryAttempts: number
   retryDelay: number // ms
+  version: string
+  buildDate: string
 }
 
 /**
@@ -33,6 +35,8 @@ export function getAppConfig(): AppConfig {
     maxLoadingTime: 30000, // 30 seconds for large dataset
     retryAttempts: 3,
     retryDelay: 1000, // 1 second between retries
+    version: import.meta.env.VITE_APP_VERSION || '0.1.0',
+    buildDate: import.meta.env.VITE_BUILD_DATE || new Date().toISOString(),
   }
 }
 

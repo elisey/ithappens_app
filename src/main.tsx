@@ -2,26 +2,23 @@
 // ABOUTME: Точка входа приложения, рендерит корневой компонент App в DOM
 import { render } from 'preact'
 import { App } from './app'
-
-// Import global styles
 import './styles/variables.css'
 import './styles/themes.css'
 import './styles/reset.css'
 import './styles/typography.css'
 import './styles/global.css'
 import './styles/animations.css'
+import { getAppConfig } from './config/app.config'
+import { swUpdateService } from './services/swUpdateService'
 
-// Register Service Worker for offline functionality
+// Log app version on startup
+const config = getAppConfig()
+console.log(`[App] Version: ${config.version}`)
+console.log(`[App] Build date: ${config.buildDate}`)
+
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
-    navigator.serviceWorker
-      .register('/sw.js')
-      .then((registration) => {
-        console.log('Service Worker registered successfully:', registration.scope)
-      })
-      .catch((error) => {
-        console.error('Service Worker registration failed:', error)
-      })
+    swUpdateService.initialize()
   })
 }
 
