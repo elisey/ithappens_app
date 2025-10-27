@@ -22,6 +22,22 @@ export default [
     },
   },
   {
+    files: ['public/sw.js'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
+      globals: {
+        self: 'readonly',
+        caches: 'readonly',
+        fetch: 'readonly',
+        console: 'readonly',
+        Response: 'readonly',
+        Headers: 'readonly',
+        URL: 'readonly',
+      },
+    },
+  },
+  {
     files: ['**/*.{ts,tsx}'],
     languageOptions: {
       parser: tsparser,
@@ -37,6 +53,7 @@ export default [
         process: 'readonly',
         document: 'readonly',
         window: 'readonly',
+        navigator: 'readonly',
         __dirname: 'readonly',
         fetch: 'readonly',
         globalThis: 'readonly',
@@ -54,6 +71,7 @@ export default [
         AbortController: 'readonly',
         AbortSignal: 'readonly',
         Response: 'readonly',
+        Request: 'readonly',
         MouseEvent: 'readonly',
         performance: 'readonly',
         Headers: 'readonly',
@@ -64,6 +82,9 @@ export default [
         Storage: 'readonly',
         DOMException: 'readonly',
         Map: 'readonly',
+        Navigator: 'readonly',
+        Window: 'readonly',
+        caches: 'readonly',
         global: 'writable',
       },
     },

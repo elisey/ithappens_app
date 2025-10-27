@@ -18,4 +18,14 @@ export default defineConfig({
       process.env.VITE_ENABLE_PERF_LOGGING
     ),
   },
+  build: {
+    // Ensure consistent chunk naming for caching
+    rollupOptions: {
+      output: {
+        entryFileNames: 'assets/[name]-[hash].js',
+        chunkFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash][extname]',
+      },
+    },
+  },
 })

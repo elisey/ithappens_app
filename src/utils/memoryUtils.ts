@@ -1,7 +1,6 @@
 // ABOUTME: Utilities for memory analysis, leak detection, and optimization suggestions
 // ABOUTME: Provides estimates, leak detection, and actionable optimization hints
 
-/* eslint-disable no-undef */
 import type { PerformanceMetrics } from '../services/performanceMonitor'
 
 /**
