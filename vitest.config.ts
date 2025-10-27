@@ -11,7 +11,7 @@ export default defineConfig({
     include: ['**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     exclude: ['**/node_modules/**', '**/dist/**', '**/*.bench.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
     coverage: {
-      reporter: ['text', 'html', 'lcov'],
+      reporter: ['text', 'html', 'lcov', 'json-summary'],
       exclude: [
         'node_modules/',
         'dist/',
@@ -19,7 +19,20 @@ export default defineConfig({
         '**/*.config.{js,ts}',
         '**/*.d.ts',
         'src/main.tsx',
+        '**/index.ts',
+        'benchmarks/**',
+        'scripts/**',
+        'public/**',
+        'src/contexts/**',
+        'src/services/analyticsCollector.ts',
       ],
+      thresholds: {
+        statements: 80,
+        branches: 80,
+        functions: 80,
+        lines: 80,
+      },
+      all: true,
     },
     benchmark: {
       include: ['**/*.bench.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
