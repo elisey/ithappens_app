@@ -31,6 +31,8 @@ export default [
         caches: 'readonly',
         fetch: 'readonly',
         console: 'readonly',
+        Response: 'readonly',
+        Headers: 'readonly',
       },
     },
   },

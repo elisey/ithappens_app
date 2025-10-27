@@ -27,6 +27,8 @@ self.addEventListener('install', (event) => {
       })
       .then(() => {
         console.log('[SW] All assets cached successfully')
+        // Force the waiting service worker to become the active service worker
+        return self.skipWaiting()
       })
       .catch((error) => {
         console.error('[SW] Failed to cache assets:', error)
@@ -39,16 +41,22 @@ self.addEventListener('activate', (event) => {
   console.log('[SW] Activating service worker...')
 
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('[SW] Deleting old cache:', cacheName)
-            return caches.delete(cacheName)
-          }
-        })
-      )
-    })
+    caches
+      .keys()
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            if (cacheName !== CACHE_NAME) {
+              console.log('[SW] Deleting old cache:', cacheName)
+              return caches.delete(cacheName)
+            }
+          })
+        )
+      })
+      .then(() => {
+        // Take control of all pages immediately
+        return self.clients.claim()
+      })
   )
 })
 
@@ -58,14 +66,21 @@ self.addEventListener('fetch', (event) => {
     caches.match(event.request).then((cachedResponse) => {
       if (cachedResponse) {
         // Found in cache - return immediately
+        console.log('[SW] Serving from cache:', event.request.url)
         return cachedResponse
       }
 
       // Not in cache - fetch from network
+      console.log('[SW] Fetching from network:', event.request.url)
       return fetch(event.request)
         .then((networkResponse) => {
-          // Don't cache non-successful responses
-          if (!networkResponse || networkResponse.status !== 200) {
+          // Don't cache non-successful responses or non-GET requests
+          if (
+            !networkResponse ||
+            networkResponse.status !== 200 ||
+            networkResponse.type === 'error' ||
+            event.request.method !== 'GET'
+          ) {
             return networkResponse
           }
 
@@ -79,8 +94,20 @@ self.addEventListener('fetch', (event) => {
           return networkResponse
         })
         .catch((error) => {
-          console.error('[SW] Fetch failed:', error)
-          throw error
+          console.error('[SW] Fetch failed for:', event.request.url, error)
+          // If offline and resource not cached, return a meaningful error
+          // For navigation requests, try to return cached index.html
+          if (event.request.mode === 'navigate') {
+            return caches.match('/index.html')
+          }
+          // For other requests, let them fail gracefully
+          return new Response('Offline - resource not available', {
+            status: 503,
+            statusText: 'Service Unavailable',
+            headers: new Headers({
+              'Content-Type': 'text/plain',
+            }),
+          })
         })
     })
   )

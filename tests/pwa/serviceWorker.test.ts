@@ -141,13 +141,14 @@ describe('Service Worker Cache Operations', () => {
 })
 
 describe('Service Worker Lifecycle', () => {
-  it('should handle install event', () => {
+  it('should handle install event and call skipWaiting', () => {
     const mockCache = {
       addAll: vi.fn().mockResolvedValue(undefined),
     }
     const mockCaches = {
       open: vi.fn().mockResolvedValue(mockCache),
     }
+    const mockSkipWaiting = vi.fn().mockResolvedValue(undefined)
 
     const ASSETS_TO_CACHE = [
       '/',
@@ -165,21 +166,24 @@ describe('Service Worker Lifecycle', () => {
     const installHandler = async () => {
       const cache = await mockCaches.open(CACHE_NAME)
       await cache.addAll(ASSETS_TO_CACHE)
+      await mockSkipWaiting()
     }
 
     return installHandler().then(() => {
       expect(mockCaches.open).toHaveBeenCalledWith('ithappens-v1')
       expect(mockCache.addAll).toHaveBeenCalledWith(ASSETS_TO_CACHE)
+      expect(mockSkipWaiting).toHaveBeenCalled()
     })
   })
 
-  it('should handle activate event and clean old caches', async () => {
+  it('should handle activate event, clean old caches, and call clients.claim', async () => {
     const CACHE_NAME = 'ithappens-v1'
     const oldCaches = ['ithappens-v0', 'other-cache']
     const mockCaches = {
       keys: vi.fn().mockResolvedValue([...oldCaches, CACHE_NAME]),
       delete: vi.fn().mockResolvedValue(true),
     }
+    const mockClientsClaim = vi.fn().mockResolvedValue(undefined)
 
     // Simulate activate event handler
     const activateHandler = async () => {
@@ -191,6 +195,7 @@ describe('Service Worker Lifecycle', () => {
           }
         })
       )
+      await mockClientsClaim()
     }
 
     await activateHandler()
@@ -199,6 +204,7 @@ describe('Service Worker Lifecycle', () => {
     expect(mockCaches.delete).toHaveBeenCalledWith('ithappens-v0')
     expect(mockCaches.delete).toHaveBeenCalledWith('other-cache')
     expect(mockCaches.delete).not.toHaveBeenCalledWith('ithappens-v1')
+    expect(mockClientsClaim).toHaveBeenCalled()
   })
 })
 
@@ -337,5 +343,43 @@ describe('Service Worker Fetch Strategy', () => {
     await fetchHandler(mockRequest)
 
     expect(mockCache.put).not.toHaveBeenCalled()
+  })
+
+  it('should fallback to cached index.html for navigation requests when offline', async () => {
+    const mockRequest = { url: 'https://example.com/some-page', mode: 'navigate' }
+    const cachedIndexHtml = new Response('<html>Cached App</html>')
+
+    const mockCaches = {
+      match: vi
+        .fn()
+        .mockResolvedValueOnce(undefined) // First call: no cache for requested page
+        .mockResolvedValueOnce(cachedIndexHtml), // Second call: return cached index.html
+    }
+
+    global.fetch = vi.fn().mockRejectedValue(new Error('Network error'))
+
+    // Simulate offline fetch handler with navigation fallback
+    const fetchHandler = async (request: { url: string; mode: string }) => {
+      const cachedResponse = await mockCaches.match(request)
+      if (cachedResponse) {
+        return cachedResponse
+      }
+
+      try {
+        return await fetch(request.url)
+      } catch {
+        // Fallback for navigation requests
+        if (request.mode === 'navigate') {
+          return mockCaches.match('/index.html')
+        }
+        return new Response('Offline', { status: 503 })
+      }
+    }
+
+    const result = await fetchHandler(mockRequest)
+
+    expect(result).toBe(cachedIndexHtml)
+    expect(mockCaches.match).toHaveBeenCalledWith(mockRequest)
+    expect(mockCaches.match).toHaveBeenCalledWith('/index.html')
   })
 })
