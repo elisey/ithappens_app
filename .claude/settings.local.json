@@ -31,7 +31,13 @@
       "Bash(npm run test:unit:*)",
       "Bash(npx vitest:*)",
       "Bash(npm run:*)",
-      "Bash(npx prettier:*)"
+      "Bash(npx prettier:*)",
+      "Bash(git rev-parse:*)",
+      "Bash(gh issue view:*)",
+      "Bash(gh issue list:*)",
+      "Bash(tee:*)",
+      "Bash(cat:*)",
+      "Bash(gh issue create:*)"
     ],
     "deny": [],
     "ask": []
