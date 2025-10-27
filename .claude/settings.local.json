@@ -38,7 +38,8 @@
       "Bash(tee:*)",
       "Bash(cat:*)",
       "Bash(gh issue create:*)",
-      "Bash(git log:*)"
+      "Bash(git log:*)",
+      "Bash(git fetch:*)"
     ],
     "deny": [],
     "ask": []

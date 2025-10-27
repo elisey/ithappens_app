@@ -1,7 +1,9 @@
 // ABOUTME: Service Worker for offline support with Cache First strategy
-// ABOUTME: Caches all static assets and stories.json for full offline functionality
+// ABOUTME: Caches all static assets and stories.json with versioned cache management
 
-const CACHE_NAME = 'ithappens-v1'
+// Version the cache - automatically updated by build script
+const CACHE_VERSION = '0.1.0-e25fda0-1761590878455'
+const CACHE_NAME = `ithappens-v${CACHE_VERSION}`
 
 // Assets to cache on install
 const ASSETS_TO_CACHE = [
@@ -16,23 +18,25 @@ const ASSETS_TO_CACHE = [
 
 // Install event - cache all assets
 self.addEventListener('install', (event) => {
-  console.log('[SW] Installing service worker...')
+  console.log('[SW] Installing version:', CACHE_VERSION)
+  console.log('[SW] Cache name:', CACHE_NAME)
 
   event.waitUntil(
     caches
       .open(CACHE_NAME)
       .then((cache) => {
-        console.log('[SW] Caching app shell and content')
+        console.log('[SW] Caching app shell and content for version:', CACHE_VERSION)
         console.log('[SW] Assets to cache:', ASSETS_TO_CACHE)
         return cache.addAll(ASSETS_TO_CACHE)
       })
       .then(() => {
-        console.log('[SW] All assets cached successfully')
+        console.log('[SW] All assets cached successfully for version:', CACHE_VERSION)
+        console.log('[SW] Skipping waiting phase to activate immediately')
         // Force the waiting service worker to become the active service worker
         return self.skipWaiting()
       })
       .catch((error) => {
-        console.error('[SW] Failed to cache assets:', error)
+        console.error('[SW] Failed to cache assets for version:', CACHE_VERSION, error)
         console.error('[SW] Error details:', error.message, error.stack)
         // Still skip waiting even if caching fails
         return self.skipWaiting()
@@ -42,25 +46,26 @@ self.addEventListener('install', (event) => {
 
 // Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
-  console.log('[SW] Activating service worker...')
+  console.log('[SW] Activating version:', CACHE_VERSION)
 
   event.waitUntil(
-    caches
-      .keys()
-      .then((cacheNames) => {
+    Promise.all([
+      // Clean up old caches
+      caches.keys().then((cacheNames) => {
         return Promise.all(
           cacheNames.map((cacheName) => {
-            if (cacheName !== CACHE_NAME) {
+            if (cacheName.startsWith('ithappens-v') && cacheName !== CACHE_NAME) {
               console.log('[SW] Deleting old cache:', cacheName)
               return caches.delete(cacheName)
             }
           })
         )
-      })
-      .then(() => {
-        // Take control of all pages immediately
-        return self.clients.claim()
-      })
+      }),
+      // Take control of all pages immediately
+      self.clients.claim(),
+    ]).then(() => {
+      console.log('[SW] Version', CACHE_VERSION, 'now active and controlling all pages')
+    })
   )
 })
 
